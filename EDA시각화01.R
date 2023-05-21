@@ -26,36 +26,35 @@ ui <- fluidPage(
                               "Outflow" = "OUT",
                               "Population Density" = "DT",
                               "Parking Count" = "PARKING")
-      ),
-      selectInput("gu", "Select a Gu:", choices = unique(data_final_M$SIGUNGU_NM))
+      )
     ),
     
     mainPanel(
       fluidRow(
         column(12,
-               h3("Total Indicator by Gu"),
+               h2("Total Indicator by Gu"),
                plotOutput("gu_treemap")
         )
       ),
+      selectInput("gu", "Select a Gu:", choices = unique(data_final_M$SIGUNGU_NM)),
       
       fluidRow(
         column(6,
-               h3("Selected Gu's Dong as a Table"),
+               h2("Selected Gu's Dong as a Table"),
                DT::dataTableOutput("gu_dong_table")
         ),
         column(6,
-               h3("Selected Gu's Dong as a Donut Chart"),
+               h2("Selected Gu's Dong as a Donut Chart"),
                plotOutput("gu_dong_donutplot")
         )
       ),
-      
+      h2("Total Indicator by Dong"),
       tabsetPanel(
         id = "panel",
-        h3("Total Indicator by Dong"),
         tabPanel("Table", DT::dataTableOutput("table")),
         tabPanel("Bar Plot", plotOutput("barplot")),
-        tabPanel("Donut Chart", plotOutput("donutplot")),
-        tabPanel("Top 20 Dong Treemap", plotOutput("top20_dong_treemap"))
+        tabPanel("Top 20 Dong Treemap", plotOutput("top20_dong_treemap")),
+        tabPanel("Top 10 Donut Chart", plotOutput("top10_dong_donutplot"))
       )
     )
   )
@@ -129,21 +128,6 @@ server <- function(input, output, session) {
       ylab(input$indicator)
   })
   
-  output$donutplot <- renderPlot({
-    df <- data_final_M %>%
-      group_by(DONG_NM) %>%
-      summarise(total = sum(!!sym(input$indicator))) %>%
-      arrange(desc(total)) %>%
-      head(10)  # top 10 동만 선택
-    
-    ggplot(df, aes(x = "", y = total, fill = DONG_NM)) +
-      geom_bar(width = 1, stat = "identity") +
-      coord_polar("y", start = 0) +
-      theme_void() +
-      geom_text(aes(label = paste0(DONG_NM, " ", round(total / sum(total) * 100, 1), "%")),
-                position = position_stack(vjust = 0.5)) +
-      theme(legend.position = "none")
-  })
   
   output$top20_dong_treemap <- renderPlot({
     top20 <- data_final_M %>%
@@ -163,8 +147,23 @@ server <- function(input, output, session) {
       labs(title = paste("Treemap of Top 20 DONG by", input$indicator), fill = input$indicator)
   })
   
+  output$top10_dong_donutplot <- renderPlot({
+    df <- data_final_M %>%
+      group_by(DONG_NM) %>%
+      summarise(total = sum(!!sym(input$indicator))) %>%
+      arrange(desc(total)) %>%
+      head(10)  # top 10 동만 선택
+    
+    ggplot(df, aes(x = "", y = total, fill = DONG_NM)) +
+      geom_bar(width = 1, stat = "identity") +
+      coord_polar("y", start = 0) +
+      theme_void() +
+      geom_text(aes(label = paste0(DONG_NM, " ", round(total / sum(total) * 100, 1), "%")),
+                position = position_stack(vjust = 0.5)) +
+      theme(legend.position = "none")
+  })
+  
 }
 
 # Run the application
 shinyApp(ui = ui, server = server)
-
