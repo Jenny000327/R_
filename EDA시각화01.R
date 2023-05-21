@@ -1,5 +1,3 @@
-#일단 이거.
-
 #install.packages("treemapify")
 library(readr)
 data_final_M <- read_csv("C:/data/preprocessed/data_final.csv")
@@ -29,14 +27,18 @@ ui <- fluidPage(
                               "Population Density" = "DT",
                               "Parking Count" = "PARKING")
       ),
-      selectInput("gu", "Select a Gu:", choices = unique(data_final_M$SIGUNGU_NM)),
-      uiOutput("dong")
     ),
     mainPanel(
+      h3("Total Indicator by Gu"),
       plotOutput("gu_barplot"),
-      DT::dataTableOutput("dong_table"),
+      sidebarPanel(
+        selectInput("gu", "Select a Gu:", choices = unique(data_final_M$SIGUNGU_NM))
+      ),
+      h3("Selected Gu's Dong as a Treemap"),
+      plotOutput("gu_dong_treemap"),
       tabsetPanel(
         id = "panel",
+        h3("Total Indicator by Dong"),
         tabPanel("Table", DT::dataTableOutput("table")),
         tabPanel("Bar Plot", plotOutput("barplot")),
         tabPanel("Donut Chart", plotOutput("donutplot")),
@@ -47,11 +49,6 @@ ui <- fluidPage(
 )
 
 server <- function(input, output, session) {
-  
-  output$dong <- renderUI({
-    df <- data_final_M %>% filter(SIGUNGU_NM == input$gu)
-    selectInput("dong", "Select a Dong:", choices = unique(df$DONG_NM))
-  })
   
   output$gu_barplot <- renderPlot({
     df <- data_final_M %>%
@@ -66,14 +63,24 @@ server <- function(input, output, session) {
       labs(x = "Gu", y = input$indicator, title = paste("Bar Plot of", input$indicator, "by Gu"))
   })
   
-  output$dong_table <- DT::renderDataTable({
-    selected_dong <- reactive({
+  output$gu_dong_treemap <- renderPlot({
+    gu_df <- reactive({
       data_final_M %>%
-        filter(SIGUNGU_NM == input$gu, DONG_NM == input$dong) %>%
+        filter(SIGUNGU_NM == input$gu) %>%
         select(DONG_NM, !!sym(input$indicator))
     })
     
-    DT::datatable(selected_dong())
+    df <- gu_df() %>%
+      group_by(DONG_NM) %>%
+      summarise(total = sum(!!sym(input$indicator))) %>%
+      arrange(desc(total))
+    
+    ggplot(df, aes(area = total, label = DONG_NM, fill = total)) +
+      geom_treemap() +
+      geom_treemap_text(fontface = "italic", place = "center", grow = TRUE) +
+      scale_fill_gradient(low = "white", high = "steelblue") +
+      theme_minimal() +
+      labs(title = paste("Treemap of Selected Gu's Dong by", input$indicator), fill = input$indicator)
   })
   
   output$table <- DT::renderDataTable({
@@ -83,19 +90,17 @@ server <- function(input, output, session) {
     DT::datatable(sorted_data)
   })
   
+  
   output$barplot <- renderPlot({
-    selected_dong <- data_final_M %>%
-      filter(SIGUNGU_NM == input$gu, DONG_NM == input$dong)
-    
-    ggplot(selected_dong, aes(x = "", y = !!sym(input$indicator), fill = DONG_NM)) +
-      geom_bar(width = 1, stat = "identity") +
-      coord_polar("y", start = 0) +
-      theme_void() +
-      labs(x = "", y = "", 
-           title = paste(input$indicator, "in", input$dong, "of", input$gu)) +
-      geom_text(aes(label = paste0(round(!!sym(input$indicator) / sum(!!sym(input$indicator)) * 100, 1), "%")),
-                position = position_stack(vjust = 0.5)) +
-      theme(legend.position = "none")
+    top20 <- data_final_M %>%
+      arrange(desc(!!sym(input$indicator))) %>%
+      head(20)
+    ggplot(top20, aes(x = reorder(DONG_NM,
+                                  -!!sym(input$indicator)), y = !!sym(input$indicator))) +
+      geom_bar(stat = 'identity') +
+      theme(axis.text.x = element_text(angle = 90, hjust = 1)) +
+      xlab("Dong") +
+      ylab(input$indicator)
   })
   
   output$donutplot <- renderPlot({
@@ -135,5 +140,3 @@ server <- function(input, output, session) {
 
 # Run the application
 shinyApp(ui = ui, server = server)
-
-             
