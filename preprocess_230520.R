@@ -107,7 +107,9 @@ data_dong <- data_joined %>%
             SMK_NUM = sum(SMK_NUM),
             OP_MK_NUM = sum(OP_MK_NUM),
             CLS_MK_NUM = sum(CLS_MK_NUM),
-            FRC_MK_NUM  = sum(FRC_MK_NUM)) %>%
+            FRC_MK_NUM  = sum(FRC_MK_NUM),
+            CMAR_X = mean(CMAR_X, na.rm = TRUE), # 평균 X 좌표
+            CMAR_Y = mean(CMAR_Y, na.rm = TRUE)) %>% # 평균 Y 좌표
   mutate(OP_RATE = OP_MK_NUM/MK_NUM,
          CLS_RATE = CLS_MK_NUM/MK_NUM) %>% ungroup()
 
@@ -131,5 +133,11 @@ data_dong %>% filter(is.na(DT))
 #             FRC_MK_NUM  = sum(FRC_MK_NUM)) %>%
 #   mutate(OP_RATE = OP_MK_NUM/MK_NUM,
 #          CLS_RATE = CLS_MK_NUM/MK_NUM) %>% ungroup()
+write.csv(data_dong,"data_final_xy.csv")
 
-#write.csv(data_dong,"data_final.csv")
+# 현재 작업 디렉토리 확인
+getwd()
+
+# 현재 디렉토리에 있는 파일 목록 보기
+list.files()
+
