@@ -12,9 +12,9 @@ library(DT)
 library(dplyr)
 library(treemapify)
 
-# User Interface
 ui <- fluidPage(
   titlePanel("Seoul Store Analysis Dashboard"),
+  
   sidebarLayout(
     sidebarPanel(
       selectInput("indicator", "Select an Indicator:",
@@ -27,15 +27,24 @@ ui <- fluidPage(
                               "Population Density" = "DT",
                               "Parking Count" = "PARKING")
       ),
+      selectInput("gu", "Select a Gu:", choices = unique(data_final_M$SIGUNGU_NM))
     ),
+    
     mainPanel(
-      h3("Total Indicator by Gu"),
-      plotOutput("gu_barplot"),
-      sidebarPanel(
-        selectInput("gu", "Select a Gu:", choices = unique(data_final_M$SIGUNGU_NM))
+      fluidRow(
+        column(12,
+               h3("Total Indicator by Gu"),
+               plotOutput("gu_barplot")
+        )
       ),
-      h3("Selected Gu's Dong as a Treemap"),
-      plotOutput("gu_dong_treemap"),
+      
+      fluidRow(
+        column(12,
+               h3("Selected Gu's Dong as a Treemap"),
+               plotOutput("gu_dong_treemap")
+        )
+      ),
+      
       tabsetPanel(
         id = "panel",
         h3("Total Indicator by Dong"),
