@@ -1,4 +1,7 @@
 #install.packages("treemapify")
+#install.packages("ggmap")
+
+library(ggmap)
 library(readr)
 data_final_M <- read_csv("C:/data/preprocessed/data_final.csv")
 View(data_final_M)
@@ -35,6 +38,14 @@ ui <- fluidPage(
     ),
     
     mainPanel(
+      #ggmap 추가
+      fluidRow(
+        column(12,
+               h2("Total Indicator by Dong"),
+               plotOutput("map")
+        )
+      ),
+      tags$br(),
       fluidRow(
         column(12,
                h2("Total Indicator by Gu"),
@@ -68,6 +79,17 @@ ui <- fluidPage(
 )
 
 server <- function(input, output, session) {
+  
+  #ggmap 추가
+  output$map <- renderPlot({
+
+    location <- c(lon = 127.047, lat = 37.557)
+    zoom <- 12
+    
+    map <- ggmap(get_map(location = location, zoom = zoom))
+    
+    print(map)
+  })
   
   output$gu_treemap <- renderPlot({
     df <- data_final_M %>%
