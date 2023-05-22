@@ -6,11 +6,16 @@ data_final_M %>% is.na() %>% apply(2,sum)
 data_final_M %>% filter(is.na(DT))
 str(data_final_M)
 
+library(tidyverse)
 library(shiny)
 library(ggplot2)
 library(DT)
 library(dplyr)
 library(treemapify)
+#install.packages("magrittr")
+library(magrittr)
+#install.packages("dplyr")
+library(dplyr)
 
 ui <- fluidPage(
   titlePanel("Seoul Store Analysis Dashboard"),
