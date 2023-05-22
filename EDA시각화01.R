@@ -6,11 +6,16 @@ data_final_M %>% is.na() %>% apply(2,sum)
 data_final_M %>% filter(is.na(DT))
 str(data_final_M)
 
+library(tidyverse)
 library(shiny)
 library(ggplot2)
 library(DT)
 library(dplyr)
 library(treemapify)
+#install.packages("magrittr")
+library(magrittr)
+#install.packages("dplyr")
+library(dplyr)
 
 ui <- fluidPage(
   titlePanel("Seoul Store Analysis Dashboard"),
@@ -36,6 +41,7 @@ ui <- fluidPage(
                plotOutput("gu_treemap")
         )
       ),
+      tags$br(),
       selectInput("gu", "Select a Gu:", choices = unique(data_final_M$SIGUNGU_NM)),
       
       fluidRow(
@@ -48,6 +54,7 @@ ui <- fluidPage(
                plotOutput("gu_dong_donutplot")
         )
       ),
+      tags$br(),
       h2("Total Indicator by Dong"),
       tabsetPanel(
         id = "panel",

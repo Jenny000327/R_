@@ -1,4 +1,10 @@
+<<<<<<< HEAD
+#install.packages("tidyverse")
+=======
+##가영 깃 test
+
 install.packages("tidyverse")
+>>>>>>> 2b6906cc8177a009760e17a363c2ffd5b5474700
 
 setwd("c:/data/raw")
 
