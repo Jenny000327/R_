@@ -1,25 +1,39 @@
 #install.packages("treemapify")
+#install.packages("magrittr")
+#install.packages("dplyr")
 #install.packages("ggmap")
+# install.packages("ggmap")
+# install.packages("ggplot2")
+# install.packages("raster")
+# install.packages("rgeos")
+# install.packages("maptools")
+#install.packages("rgdal")
 
 library(ggmap)
-library(readr)
-data_final_M <- read_csv("C:/data/preprocessed/data_final.csv")
-View(data_final_M)
-data_final_M %>% is.na() %>% apply(2,sum)
-data_final_M %>% filter(is.na(DT))
-str(data_final_M)
-
+library(ggplot2)
+library(rgeos)
+library(maptools)
+library(rgdal)
 library(tidyverse)
 library(shiny)
 library(ggplot2)
 library(DT)
 library(dplyr)
 library(treemapify)
-#install.packages("magrittr")
+library(raster)
+library(readr)
 library(magrittr)
-#install.packages("dplyr")
-library(dplyr)
 
+data_final_M <- read_csv("C:/data/preprocessed/data_final.csv")
+View(data_final_M)
+data_final_M %>% is.na() %>% apply(2,sum)
+data_final_M %>% filter(is.na(DT))
+str(data_final_M)
+
+
+
+
+#사용자 Ui 정의
 ui <- fluidPage(
   titlePanel("Seoul Store Analysis Dashboard"),
   
@@ -78,6 +92,8 @@ ui <- fluidPage(
   )
 )
 
+
+#server 부분 정의
 server <- function(input, output, session) {
   
   #ggmap 추가
@@ -108,7 +124,7 @@ server <- function(input, output, session) {
   output$gu_dong_table <- DT::renderDataTable({
     gu_df <- data_final_M %>%
       filter(SIGUNGU_NM == input$gu) %>%
-      select(DONG_NM, !!sym(input$indicator))
+      dplyr::select(DONG_NM, !!sym(input$indicator))
     
     sorted_data <- gu_df %>%
       arrange(desc(!!sym(input$indicator))) 
@@ -119,7 +135,7 @@ server <- function(input, output, session) {
     gu_df <- reactive({
       data_final_M %>%
         filter(SIGUNGU_NM == input$gu) %>%
-        select(DONG_NM, !!sym(input$indicator))
+        dplyr::select(DONG_NM, !!sym(input$indicator))
     })
     
     df <- gu_df() %>%
@@ -140,7 +156,7 @@ server <- function(input, output, session) {
   output$table <- DT::renderDataTable({
     sorted_data <- data_final_M %>%
       arrange(desc(!!sym(input$indicator))) %>%
-      select(SIGUNGU_NM, DONG_NM, !!sym(input$indicator)) 
+      dplyr::select(SIGUNGU_NM, DONG_NM, !!sym(input$indicator)) 
     DT::datatable(sorted_data)
   })
   
