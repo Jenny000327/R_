@@ -11,6 +11,7 @@
 
 library(ggmap)
 library(ggplot2)
+library(raster)
 library(rgeos)
 library(maptools)
 library(rgdal)
@@ -20,7 +21,6 @@ library(ggplot2)
 library(DT)
 library(dplyr)
 library(treemapify)
-library(raster)
 library(readr)
 library(magrittr)
 
