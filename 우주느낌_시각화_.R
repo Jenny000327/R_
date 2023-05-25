@@ -1,5 +1,11 @@
-#install.packages("treemapify")
+install.packages("treemapify")
+install.packages("ggiraph", dependencies = True, INSTALL_opts = "--no-lock")
 install.packages("showtext")
+install.packages("magrittr")
+install.packages("shiny")
+install.packages("ggplot2")
+install.packages("DT")
+install.packages("dplyr")
 library(readr)
 data_final_M <- read_csv("C:/data/preprocessed/data_final.csv")
 View(data_final_M)
@@ -15,7 +21,7 @@ library(dplyr)
 library(treemapify)
 library(ggiraph)  # for interactive plots
 library(showtext)  # for font manipulation
-
+library(magrittr)
 # Define the Korean font
 font_add_google("Noto Sans KR", "korean")
 
