@@ -1,12 +1,12 @@
 #install.packages("treemapify")
 library(readr)
-data_final_M <- read_csv("C:/data/preprocessed/data_final.csv")
+library(tidyverse)
+data_final_M <- read_csv('/Users/gayeongkim/Desktop/data/prepared/data_final.csv')
 View(data_final_M)
 data_final_M %>% is.na() %>% apply(2,sum)
 data_final_M %>% filter(is.na(DT))
 str(data_final_M)
 
-library(tidyverse)
 library(shiny)
 library(ggplot2)
 library(DT)
@@ -100,6 +100,7 @@ server <- function(input, output, session) {
         select(DONG_NM, !!sym(input$indicator))
     })
     
+    ##도넛차트##
     df <- gu_df() %>%
       group_by(DONG_NM) %>%
       summarise(total = sum(!!sym(input$indicator))) %>%
@@ -174,3 +175,4 @@ server <- function(input, output, session) {
 
 # Run the application
 shinyApp(ui = ui, server = server)
+
