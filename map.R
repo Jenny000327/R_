@@ -1,3 +1,5 @@
+# 사이트 따라해보고 있었음_가영
+
 library(ggplot2)
 library(ggmap)
 library(raster)
