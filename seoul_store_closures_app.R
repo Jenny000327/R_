@@ -1,4 +1,3 @@
-# 얍
 # 라이브러리 불러오기. Library Imports.
 library(shiny)
 library(shinydashboard)
@@ -48,9 +47,9 @@ ui <- dashboardPage(
                                 tabPanel("Open", imageOutput("op_img")),
                                 tabPanel("Closed", imageOutput("cls_img"))
                     ), 
-                    width = 8 # 지도 크기를 화면 크기에 따라 유동적으로 변하게 만들었더니 전체화면으로 하면 밑에 지도가 짤려서 너비를 8로 두어야됨. 
+                    width = 12# 지도 크기를 화면 크기에 따라 유동적으로 변하게 만들었더니 전체화면으로 하면 밑에 지도가 짤려서 너비를 8로 두어야됨. 
                 ),
-                box(title = "Table", DTOutput("table_map"), width = 8) # 첫번째 박스 아래에 두번째 박스에는 테이블을 넣었어.
+                box(title = "Table", DTOutput("table_map"), width = 12) # 첫번째 박스 아래에 두번째 박스에는 테이블을 넣었어.
               ) #근데 이부분이 사이즈 조절을 좀 하고 싶은데 안이뻐. 밑에 위에 다 8로 맞추니까 밑에 테이블이 깨지고. 테이블 박스만 10으로 하자니 이상하고.
       ),
       
