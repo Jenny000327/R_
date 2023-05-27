@@ -11,8 +11,8 @@ library(dplyr)
 #setwd("c:/data/raw")
 #dir()
 
-#df <- read_csv("C:/data/preprocessed/data_final.csv") %>% as_tibble() %>% select(-...1)
-df <- read_csv("/Users/gayeongkim/Desktop/data/prepared/data_final.csv") %>% as_tibble() %>% select(-...1)
+df <- read_csv("C:/data/preprocessed/data_final.csv") %>% as_tibble() %>% select(-...1)
+#df <- read_csv("/Users/gayeongkim/Desktop/data/prepared/data_final.csv") %>% as_tibble() %>% select(-...1)
 df
 
 df_cluster <- df %>% dplyr::select(MK_NUM,SMK_NUM,DT,IN,OUT,PARKING)
