@@ -17,7 +17,7 @@ library(tidyverse)
 library(sf)
 library(mapproj)
 
-map_korea <-st_read('C:/data/preprocessed/EMD_202302/emd.shp')
+map_korea <-st_read('C:/data/preprocessed/EMD_202101/TL_SCCO_EMD.shp')
 map_korea$DONG_CD <- iconv(map_korea$DONG_CD,
                              from='CP949',
                              to='UTF-8',
@@ -25,7 +25,7 @@ map_korea$DONG_CD <- iconv(map_korea$DONG_CD,
                              mark=TRUE,
                              toRaw = FALSE)
 P <- read.csv("C:/data/preprocessed/data_final.csv", header = TRUE) #시각화할 데이터셋
-map <- shapefile("C:/data/preprocessed/EMD_202302/emd.shp") #지리 정보 데이터셋
+map <- shapefile("C:/data/preprocessed/EMD_202101/TL_SCCO_EMD.shp") #지리 정보 데이터셋
 
 map <- spTransform(map, CRSobj = CRS('+proj=longlat +ellps=WGS84 +datum=WGS84 +no_defs'))
 new_map <- fortify(map, region = 'DONG_CD')
