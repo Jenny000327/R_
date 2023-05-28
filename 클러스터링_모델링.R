@@ -33,7 +33,7 @@ for (k in k_values) {
 plot(k_values, inertias, type = "b", pch = 20, frame = FALSE, xlab = "Number of clusters (k)", ylab = "Total within-cluster sum of squares")
 
 # 군집 개수 설정
-k <- 5
+k <- 4
 
 # k = 4 k-means 클러스터링 수행
 kmeans_result <- kmeans(df_cluster, centers = k)
@@ -62,10 +62,14 @@ train_data <- df[train_indices, ]
 test_data <- df[-train_indices, ]
 
 # 랜덤 포레스트 & 회귀분석 모델 훈련
+# 1. 독립변수 전부 다
 rf1_model <- randomForest(CLS_RATE ~ MK_NUM + SMK_NUM + OP_MK_NUM + CLS_MK_NUM + FRC_MK_NUM + OP_RATE
                           + DT + IN + OUT + PARKING + cluster, data = df)
+# 2. 마켓 수 변수들만
 rf2_model <- randomForest(CLS_RATE ~ MK_NUM + SMK_NUM + OP_MK_NUM + CLS_MK_NUM + FRC_MK_NUM + cluster, data = df)
+# 3. 따로 찾은 독립변수들만
 rf3_model <- randomForest(CLS_RATE ~ DT + IN + OUT + PARKING + cluster, data = df)
+# 4. try
 rf4_model <- randomForest(CLS_RATE ~ MK_NUM + SMK_NUM + DT + IN + OUT + PARKING + cluster, data = df)
 
 
