@@ -11,8 +11,8 @@ library(dplyr)
 #setwd("c:/data/raw")
 #dir()
 
-df <- read_csv("C:/data/preprocessed/data_final.csv") %>% as_tibble() %>% select(-...1)
-#df <- read_csv("/Users/gayeongkim/Desktop/data/prepared/data_final.csv") %>% as_tibble() %>% select(-...1)
+#df <- read_csv("C:/data/preprocessed/data_final.csv") %>% as_tibble() %>% select(-...1)
+df <- read_csv("/Users/gayeongkim/Desktop/data/prepared/data_final.csv") %>% as_tibble() %>% select(-...1)
 df
 
 df_cluster <- df %>% dplyr::select(MK_NUM,SMK_NUM,DT,IN,OUT,PARKING)
@@ -33,7 +33,7 @@ for (k in k_values) {
 plot(k_values, inertias, type = "b", pch = 20, frame = FALSE, xlab = "Number of clusters (k)", ylab = "Total within-cluster sum of squares")
 
 # 군집 개수 설정
-k <- 4
+k <- 5
 
 # k = 4 k-means 클러스터링 수행
 kmeans_result <- kmeans(df_cluster, centers = k)
@@ -62,25 +62,118 @@ train_data <- df[train_indices, ]
 test_data <- df[-train_indices, ]
 
 # 랜덤 포레스트 & 회귀분석 모델 훈련
-rf1_model <- randomForest(CLS_RATE ~ MK_NUM + SMK_NUM + DT + IN + OUT + PARKING + cluster, data = df)
-rf2_model <- randomForest(CLS_RATE ~ MK_NUM + SMK_NUM + DT + IN + OUT + PARKING + cluster, data = df)
+rf1_model <- randomForest(CLS_RATE ~ MK_NUM + SMK_NUM + OP_MK_NUM + CLS_MK_NUM + FRC_MK_NUM + OP_RATE
+                          + DT + IN + OUT + PARKING + cluster, data = df)
+rf2_model <- randomForest(CLS_RATE ~ MK_NUM + SMK_NUM + OP_MK_NUM + CLS_MK_NUM + FRC_MK_NUM + cluster, data = df)
+rf3_model <- randomForest(CLS_RATE ~ DT + IN + OUT + PARKING + cluster, data = df)
+rf4_model <- randomForest(CLS_RATE ~ MK_NUM + SMK_NUM + DT + IN + OUT + PARKING + cluster, data = df)
+
+
 rg1_model <- lm(CLS_RATE ~ MK_NUM + SMK_NUM + DT + IN + OUT + PARKING + cluster, data = df)
-rg2_model <- lm(CLS_RATE ~ MK_NUM + SMK_NUM + DT + IN + OUT + PARKING + cluster, data = df)
+rg2_model <- lm(CLS_RATE ~ MK_NUM + SMK_NUM + OP_MK_NUM + CLS_MK_NUM + FRC_MK_NUM + cluster, data = df)
+rg3_model <- lm(CLS_RATE ~ DT + IN + OUT + PARKING + cluster, data = df)
+rg4_model <- lm(CLS_RATE ~ MK_NUM + SMK_NUM + DT + IN + OUT + PARKING + cluster, data = df)
+
+
+#그래프 그리기(참값 vs. 예측값)
+par(mfrow=c(2,2))
+
+plot(df$CLS_RATE)
+lines(rg1_model$fitted.values, col = "red")
+
+plot(df$CLS_RATE)
+lines(rg2_model$fitted.values, col = "blue")
+
+plot(df$CLS_RATE)
+lines(rg2_model$fitted.values, col = "green")
+
+plot(df$CLS_RATE)
+lines(rg2_model$fitted.values, col = "yellow")
+
 
 # 테스트 데이터 예측
-predictions_rf <- predict(rf1_model, newdata = test_data)
-predictions_rg <- predict(rg1_model, newdata = test_data)
+predictions_rf1<- predict(rf1_model, newdata = test_data)
+predictions_rf2<- predict(rf2_model, newdata = test_data)
+predictions_rf3<- predict(rf3_model, newdata = test_data)
+predictions_rf4<- predict(rf4_model, newdata = test_data)
 
-test_data$predictions_rf <- predictions_rf
-test_data$predictions_rg <- predictions_rg
+predictions_rg1 <- predict(rg1_model, newdata = test_data)
+predictions_rg2<- predict(rg2_model, newdata = test_data)
+predictions_rg3<- predict(rg3_model, newdata = test_data)
+predictions_rg4<- predict(rg4_model, newdata = test_data)
+
+test_data$predictions_rf1 <- predictions_rf1
+test_data$predictions_rf2 <- predictions_rf2
+test_data$predictions_rf3 <- predictions_rf3
+test_data$predictions_rf4 <- predictions_rf4
+
+test_data$predictions_rg1 <- predictions_rg1
+test_data$predictions_rg2 <- predictions_rg2
+test_data$predictions_rg3 <- predictions_rg3
+test_data$predictions_rg4 <- predictions_rg4
 
 # 예측 결과 평가 ---- DT / DT, IN, OUT / DT, IN, OUT, PARKING 
-MSE_rf = mean((test_data$predictions_rf - test_data$CLS_RATE)^2)
-MSE_rg = mean((test_data$predictions_rg - test_data$CLS_RATE)^2)
+MSE_rf1 = mean((test_data$predictions_rf1 - test_data$CLS_RATE)^2)
+MSE_rf2 = mean((test_data$predictions_rf2 - test_data$CLS_RATE)^2)
+MSE_rf3 = mean((test_data$predictions_rf3 - test_data$CLS_RATE)^2)
+MSE_rf4 = mean((test_data$predictions_rf4 - test_data$CLS_RATE)^2)
 
-100*MSE_rf %>% round(10)
-100*MSE_rg %>% round(10)
+MSE_rg1 = mean((test_data$predictions_rg1 - test_data$CLS_RATE)^2)
+MSE_rg2 = mean((test_data$predictions_rg2 - test_data$CLS_RATE)^2)
+MSE_rg3 = mean((test_data$predictions_rg3 - test_data$CLS_RATE)^2)
+MSE_rg4 = mean((test_data$predictions_rg4 - test_data$CLS_RATE)^2)
 
+100*MSE_rf1 %>% round(10)
+100*MSE_rf2%>% round(10)
+100*MSE_rf3 %>% round(10)
+100*MSE_rf4 %>% round(10)
 
+100*MSE_rg1 %>% round(10)
+100*MSE_rg2%>% round(10)
+100*MSE_rg3 %>% round(10)
+100*MSE_rg4 %>% round(10)
 
+# 라이브러리 이용
+library(Metrics)
 
+# rf1
+mse(test_data$predictions_rf1,test_data$CLS_RATE)
+mae(test_data$predictions_rf1,test_data$CLS_RATE)
+mape(test_data$predictions_rf1,test_data$CLS_RATE)
+rmse(test_data$predictions_rf1,test_data$CLS_RATE)
+# rf2
+mse(test_data$predictions_rf2,test_data$CLS_RATE)
+mae(test_data$predictions_rf2,test_data$CLS_RATE)
+mape(test_data$predictions_rf2,test_data$CLS_RATE)
+rmse(test_data$predictions_rf2,test_data$CLS_RATE)
+# rf3
+mse(test_data$predictions_rf3,test_data$CLS_RATE)
+mae(test_data$predictions_rf3,test_data$CLS_RATE)
+mape(test_data$predictions_rf3,test_data$CLS_RATE)
+rmse(test_data$predictions_rf3,test_data$CLS_RATE)
+# rf4
+mse(test_data$predictions_rf4,test_data$CLS_RATE)
+mae(test_data$predictions_rf4,test_data$CLS_RATE)
+mape(test_data$predictions_rf4,test_data$CLS_RATE)
+rmse(test_data$predictions_rf4,test_data$CLS_RATE)
+
+# rg1
+mse(test_data$predictions_rg1,test_data$CLS_RATE)
+mae(test_data$predictions_rg1,test_data$CLS_RATE)
+mape(test_data$predictions_rg1,test_data$CLS_RATE)
+rmse(test_data$predictions_rg1,test_data$CLS_RATE)
+# rg2
+mse(test_data$predictions_rg2,test_data$CLS_RATE)
+mae(test_data$predictions_rg2,test_data$CLS_RATE)
+mape(test_data$predictions_rg2,test_data$CLS_RATE)
+rmse(test_data$predictions_rg2,test_data$CLS_RATE)
+# rg3
+mse(test_data$predictions_rg3,test_data$CLS_RATE)
+mae(test_data$predictions_rg3,test_data$CLS_RATE)
+mape(test_data$predictions_rg3,test_data$CLS_RATE)
+rmse(test_data$predictions_rg3,test_data$CLS_RATE)
+# rg4
+mse(test_data$predictions_rg4,test_data$CLS_RATE)
+mae(test_data$predictions_rg4,test_data$CLS_RATE)
+mape(test_data$predictions_rg4,test_data$CLS_RATE)
+rmse(test_data$predictions_rg4,test_data$CLS_RATE)
