@@ -4,6 +4,7 @@
 library(cluster)
 library(randomForest)
 library(dplyr)
+library(readr)
 
 # 1. 클러스터링 ----
 ## 1.1 분석 ----
@@ -62,19 +63,20 @@ train_data <- df[train_indices, ]
 test_data <- df[-train_indices, ]
 
 # 랜덤 포레스트 & 회귀분석 모델 훈련
-# 1. 독립변수 전부 다
-rf1_model <- randomForest(CLS_RATE ~ MK_NUM + SMK_NUM + OP_MK_NUM + CLS_MK_NUM + FRC_MK_NUM + OP_RATE
+# 1. 독립변수 전부 다(CLS_RATE, CLS_MK_NUM 제외)
+rf1_model <- randomForest(CLS_RATE ~ MK_NUM + SMK_NUM + OP_MK_NUM + FRC_MK_NUM + OP_RATE
                           + DT + IN + OUT + PARKING + cluster, data = df)
 # 2. 마켓 수 변수들만
-rf2_model <- randomForest(CLS_RATE ~ MK_NUM + SMK_NUM + OP_MK_NUM + CLS_MK_NUM + FRC_MK_NUM + cluster, data = df)
+rf2_model <- randomForest(CLS_RATE ~ MK_NUM + SMK_NUM + OP_MK_NUM + FRC_MK_NUM + cluster, data = df)
 # 3. 따로 찾은 독립변수들만
 rf3_model <- randomForest(CLS_RATE ~ DT + IN + OUT + PARKING + cluster, data = df)
 # 4. try
 rf4_model <- randomForest(CLS_RATE ~ MK_NUM + SMK_NUM + DT + IN + OUT + PARKING + cluster, data = df)
 
 
-rg1_model <- lm(CLS_RATE ~ MK_NUM + SMK_NUM + DT + IN + OUT + PARKING + cluster, data = df)
-rg2_model <- lm(CLS_RATE ~ MK_NUM + SMK_NUM + OP_MK_NUM + CLS_MK_NUM + FRC_MK_NUM + cluster, data = df)
+rg1_model <- lm(CLS_RATE ~ MK_NUM + SMK_NUM + OP_MK_NUM + FRC_MK_NUM + OP_RATE
+                + DT + IN + OUT + PARKING + cluster, data = df)
+rg2_model <- lm(CLS_RATE ~ MK_NUM + SMK_NUM + OP_MK_NUM + FRC_MK_NUM + cluster, data = df)
 rg3_model <- lm(CLS_RATE ~ DT + IN + OUT + PARKING + cluster, data = df)
 rg4_model <- lm(CLS_RATE ~ MK_NUM + SMK_NUM + DT + IN + OUT + PARKING + cluster, data = df)
 
@@ -189,11 +191,19 @@ model_mae=c(rf1_mae, rf2_mae, rf3_mae, rf4_mae, rg1_mae, rg2_mae, rg3_mae, rg4_m
 model_mape=c(rf1_mape, rf2_mape, rf3_mape, rf4_mape, rg1_mape, rg2_mape, rg3_mape, rg4_mape)
 model_rmse=c(rf1_rmse, rf2_rmse, rf3_rmse, rf4_rmse, rg1_rmse, rg2_rmse, rg3_rmse, rg4_rmse)
 
-barplot(model_mse,names=c('rf1_mse', 'rf2_mse', 'rf3_mse', 'rf4_mse', 'rg1_mse', 'rg2_mse', 'rg3_mse', 'rg4_mse'), las=2)
+#install.packages('colorspace')
+library(colorspace)
+hcl_palettes(plot = TRUE)
+clr <- qualitative_hcl(8, palette = "Set 3")
+
+barplot(model_mse,names=c('rf1_mse', 'rf2_mse', 'rf3_mse', 'rf4_mse', 'rg1_mse', 'rg2_mse', 'rg3_mse', 'rg4_mse'), las=2, col=clr)
 title(main="mse")
-barplot(model_mae,names=c('rf1_mae', 'rf2_mae', 'rf3_mae', 'rf4_mae', 'rg1_mae', 'rg2_mae', 'rg3_mae', 'rg4_mae'), las=2)
+
+barplot(model_mae,names=c('rf1_mae', 'rf2_mae', 'rf3_mae', 'rf4_mae', 'rg1_mae', 'rg2_mae', 'rg3_mae', 'rg4_mae'), las=2, col=clr)
 title(main="mae")
-barplot(model_mape,names=c('rf1_mape', 'rf2_mape', 'rf3_mape', 'rf4_mape', 'rg1_mape', 'rg2_mape', 'rg3_mape', 'rg4_mape'), las=2)
+
+barplot(model_mape,names=c('rf1_mape', 'rf2_mape', 'rf3_mape', 'rf4_mape', 'rg1_mape', 'rg2_mape', 'rg3_mape', 'rg4_mape'), las=2, col=clr)
 title(main="mape")
-barplot(model_rmse,names=c('rf1_rmse', 'rf2_rmse', 'rf3_rmse', 'rf4_rmse', 'rg1_rmse', 'rg2_rmse', 'rg3_rmse', 'rg4_rmse'), las=2)
+
+barplot(model_rmse,names=c('rf1_rmse', 'rf2_rmse', 'rf3_rmse', 'rf4_rmse', 'rg1_rmse', 'rg2_rmse', 'rg3_rmse', 'rg4_rmse'), las=2, col=clr)
 title(main="rmse")
