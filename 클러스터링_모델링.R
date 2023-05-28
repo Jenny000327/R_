@@ -63,9 +63,9 @@ test_data <- df[-train_indices, ]
 
 # 랜덤 포레스트 & 회귀분석 모델 훈련
 rf1_model <- randomForest(CLS_RATE ~ MK_NUM + SMK_NUM + DT + IN + OUT + PARKING + cluster, data = df)
-rf2_model <- randomForest(CLS_RATE ~ MK_NUM + SMK_NUM + DT + IN + OUT + PARKING + cluster, data = df)
+#rf2_model <- randomForest(CLS_RATE ~ MK_NUM + SMK_NUM + DT + IN + OUT + PARKING + cluster, data = df)
 rg1_model <- lm(CLS_RATE ~ MK_NUM + SMK_NUM + DT + IN + OUT + PARKING + cluster, data = df)
-rg2_model <- lm(CLS_RATE ~ MK_NUM + SMK_NUM + DT + IN + OUT + PARKING + cluster, data = df)
+#rg2_model <- lm(CLS_RATE ~ MK_NUM + SMK_NUM + DT + IN + OUT + PARKING + cluster, data = df)
 
 # 테스트 데이터 예측
 predictions_rf <- predict(rf1_model, newdata = test_data)
@@ -75,12 +75,13 @@ test_data$predictions_rf <- predictions_rf
 test_data$predictions_rg <- predictions_rg
 
 # 예측 결과 평가 ---- DT / DT, IN, OUT / DT, IN, OUT, PARKING 
-MSE_rf = mean((test_data$predictions_rf - test_data$CLS_RATE)^2)
-MSE_rg = mean((test_data$predictions_rg - test_data$CLS_RATE)^2)
+MSE_rf1 = mean((test_data$predictions_rf - test_data$CLS_RATE)^2)
+MSE_rg2 = mean((test_data$predictions_rg - test_data$CLS_RATE)^2)
 
-100*MSE_rf %>% round(10)
-100*MSE_rg %>% round(10)
-
-
+100*MSE_rf1 %>% round(10)
+100*MSE_rg2 %>% round(10)
 
 
+test_data
+
+write.csv(test_data,"C:/data/preprocessed/test_data.csv")
