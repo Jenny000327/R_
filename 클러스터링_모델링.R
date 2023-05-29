@@ -12,8 +12,8 @@ library(readr)
 #setwd("c:/data/raw")
 #dir()
 
-#df <- read_csv("C:/data/preprocessed/data_final.csv") %>% as_tibble() %>% select(-...1)
-df <- read_csv("/Users/gayeongkim/Desktop/data/prepared/data_final.csv") %>% as_tibble() %>% select(-...1)
+df <- read_csv("C:/data/preprocessed/data_final.csv") %>% as_tibble() %>% select(-...1)
+#df <- read_csv("/Users/gayeongkim/Desktop/data/prepared/data_final.csv") %>% as_tibble() %>% select(-...1)
 df
 
 df_cluster <- df %>% dplyr::select(MK_NUM,SMK_NUM,DT,IN,OUT,PARKING)
@@ -63,12 +63,6 @@ train_data <- df[train_indices, ]
 test_data <- df[-train_indices, ]
 
 # 랜덤 포레스트 & 회귀분석 모델 훈련
-<<<<<<< HEAD
-rf1_model <- randomForest(CLS_RATE ~ MK_NUM + SMK_NUM + DT + IN + OUT + PARKING + cluster, data = df)
-#rf2_model <- randomForest(CLS_RATE ~ MK_NUM + SMK_NUM + DT + IN + OUT + PARKING + cluster, data = df)
-rg1_model <- lm(CLS_RATE ~ MK_NUM + SMK_NUM + DT + IN + OUT + PARKING + cluster, data = df)
-#rg2_model <- lm(CLS_RATE ~ MK_NUM + SMK_NUM + DT + IN + OUT + PARKING + cluster, data = df)
-=======
 # 1. 독립변수 전부 다(CLS_RATE, CLS_MK_NUM 제외)
 rf1_model <- randomForest(CLS_RATE ~ MK_NUM + SMK_NUM + OP_MK_NUM + FRC_MK_NUM + OP_RATE
                           + DT + IN + OUT + PARKING + cluster, data = df)
@@ -102,7 +96,6 @@ lines(rg2_model$fitted.values, col = "green")
 plot(df$CLS_RATE)
 lines(rg2_model$fitted.values, col = "yellow")
 
->>>>>>> b1078b9d8c3649bde81fad684f741ff1b3b73f42
 
 # 테스트 데이터 예측
 predictions_rf1<- predict(rf1_model, newdata = test_data)
@@ -126,13 +119,6 @@ test_data$predictions_rg3 <- predictions_rg3
 test_data$predictions_rg4 <- predictions_rg4
 
 # 예측 결과 평가 ---- DT / DT, IN, OUT / DT, IN, OUT, PARKING 
-<<<<<<< HEAD
-MSE_rf1 = mean((test_data$predictions_rf - test_data$CLS_RATE)^2)
-MSE_rg2 = mean((test_data$predictions_rg - test_data$CLS_RATE)^2)
-
-100*MSE_rf1 %>% round(10)
-100*MSE_rg2 %>% round(10)
-=======
 MSE_rf1 = mean((test_data$predictions_rf1 - test_data$CLS_RATE)^2)
 MSE_rf2 = mean((test_data$predictions_rf2 - test_data$CLS_RATE)^2)
 MSE_rf3 = mean((test_data$predictions_rf3 - test_data$CLS_RATE)^2)
@@ -147,18 +133,12 @@ MSE_rg4 = mean((test_data$predictions_rg4 - test_data$CLS_RATE)^2)
 100*MSE_rf2%>% round(10)
 100*MSE_rf3 %>% round(10)
 100*MSE_rf4 %>% round(10)
->>>>>>> b1078b9d8c3649bde81fad684f741ff1b3b73f42
 
 100*MSE_rg1 %>% round(10)
 100*MSE_rg2%>% round(10)
 100*MSE_rg3 %>% round(10)
 100*MSE_rg4 %>% round(10)
 
-<<<<<<< HEAD
-test_data
-
-write.csv(test_data,"C:/data/preprocessed/test_data.csv")
-=======
 # 모델 성능 평가 ; 라이브러리 이용
 library(Metrics)
 
@@ -227,4 +207,3 @@ title(main="mape")
 
 barplot(model_rmse,names=c('rf1_rmse', 'rf2_rmse', 'rf3_rmse', 'rf4_rmse', 'rg1_rmse', 'rg2_rmse', 'rg3_rmse', 'rg4_rmse'), las=2, col=clr)
 title(main="rmse")
->>>>>>> b1078b9d8c3649bde81fad684f741ff1b3b73f42
