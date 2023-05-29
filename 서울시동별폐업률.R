@@ -10,8 +10,8 @@ library(readr)
 library(RColorBrewer)
 
 # data_final_M 데이터.
-#data_final_M <- read_csv("C:/data/preprocessed/data_final.csv")
-data_final_M <- read_csv("/Users/gayeongkim/Desktop/Git_R/R_/data_final.csv")
+data_final_M <- read_csv("C:/data/preprocessed/data_final.csv")
+#data_final_M <- read_csv("/Users/gayeongkim/Desktop/Git_R/R_/data_final.csv")
 
 
 #사용자 Ui 부분 
