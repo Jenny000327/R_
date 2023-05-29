@@ -19,7 +19,6 @@ shp_emd@data
 slotNames(shp_emd@data)
 #작업할 데이터 생성
 data_emd <- shp_emd@data; str(data_emd)
-
 #기준이 되는  동명 데이터 생성
 data_result <- shp_emd@data
 str(data_result)
@@ -46,7 +45,25 @@ head(result)
 #csv로 저장
 write.csv(result, file="C:/data/preprocessed/EMD_202101/TL_SCCO_EMD_convert.csv", row.names = F)
 
-#지도 그리기
+#지도그리기 1
+
+# 지도 데이터 불러오기
+#map <- read.csv("C:/data/preprocessed/EMD_202101/TL_SCCO_EMD_convert.csv")
+# 데이터 파일 불러오기 (예시: data_final.csv)
+#P <- read.csv("C:/data/preprocessed/data_final.csv")
+#P
+# 지도 데이터와 데이터 파일 병합
+#merged_data <- cbind(map,P)
+
+# ggplot2를 사용하여 지도 시각화
+#ggplot(merged_data, aes(x = long, y = lat, group = group)) +
+  #geom_polygon(fill = "lightblue", color = "black") +
+  #coord_map() +
+  #labs(title = "서울시 도별 지도") +
+  #theme_minimal()
+
+
+#지도 그리기2
 library(ggmap)
 library(ggplot2)
 library(grid)
