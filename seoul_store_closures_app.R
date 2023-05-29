@@ -259,25 +259,57 @@ server <- function(input, output){
 
   # Cluster 1
   output$table_cluster1 <- renderDataTable({
-    # Cluster 1 data
+    
   })
   output$bar_cluster1 <- renderPlot({
-    # Cluster 1 bar plot
+    
   })
   output$desc_cluster1 <- renderText({
-    # Cluster 1 description
+    
   })
   
-  # And so on for the rest of the clusters
+  
+  # Cluster 2
+  output$table_cluster2 <- renderDataTable({
+    
+  })
+  output$bar_cluster2 <- renderPlot({
+    
+  })
+  output$desc_cluster2 <- renderText({
+    
+  })
+  
+  # Cluster 3
+  output$table_cluster3 <- renderDataTable({
+    
+  })
+  output$bar_cluster3 <- renderPlot({
+    
+  })
+  output$desc_cluster3 <- renderText({
+    
+  })
+  
+  # Cluster 4
+  output$table_cluster4 <- renderDataTable({
+    
+  })
+  output$bar_cluster4 <- renderPlot({
+    
+  })
+  output$desc_cluster4 <- renderText({
+    
+  })
   
   # Random Forest
   output$rf_plot <- renderPlot({
-    # Random Forest scatter plot of actual vs predicted values
+    
   })
   
   # Regression
   output$reg_plot <- renderPlot({
-    # Regression scatter plot of actual vs predicted values
+    
   })
 
 }
