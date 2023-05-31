@@ -2,6 +2,8 @@ library(ggplot2)
 library(dplyr)
 library(rgdal)
 library(sp)
+P <- read.csv("C:/data/preprocessed/data_dong.csv", header = TRUE, fileEncoding = "CP949", encoding = "UTF-8")
+View(P)
 
 from_crs <- CRS("+proj=tmerc +lat_0=38 +lon_0=127.5 +k=0.9996 +x_0=1000000 +y_0=2000000 +ellps=GRS80 +units=m")
 to_crs <- CRS("+proj=longlat +ellps=WGS84 +datum=WGS84 +no_defs")
@@ -25,21 +27,25 @@ str(data_result)
 head(data_result)
 
 #shp파일을 data.frame으로 변경( 경도, 위도 값 있음)
-shp_result <- fortify(shp_emd)
+shp_result <- fortify(shp_emd, region = 'EMD_CD')
 str(shp_result)
 head(shp_result)
 
 #위에서 만든 data_result에서 동명 추출 및 기준id 생성 
-Name <- cbind(id=row.names(data_result), emdname=as.character(data_result$EMD_ENG_NM))
-str(Name);head(Name)
+#Name <- cbind(id=as.character(data_result$EMD_CD), emdcd=as.character(data_result$EMD_CD))
+#str(Name);head(Name)
 
 #list를 data.frame으로 변경 후, id를 factor->char로 변경 
-x <- as.data.frame(Name)
-x$id <- as.character(x$id)
-str(x); head(x)
+#x <- as.data.frame(Name)
+#y <- as.data.frame(Name)
+#x$id <- as.numeric(x$id)
+#y$emdcd <- as.numeric(y$emdcd)
+#str(x); head(x)
+#str(y); head(y)
+
 
 #마무리
-result <- left_join(shp_result, x)
+result <- left_join(id, group, by ='id')
 str(result)
 head(result)
 #csv로 저장
@@ -75,8 +81,17 @@ library(dplyr)
 library(rgdal)
 library(sp)
 
-P <- read.csv("C:/data/preprocessed/data_final.csv")
-map <- read.csv("C:/data/preprocessed/EMD_202101/TL_SCCO_EMD_convert.csv")
+P <- read.csv("C:/data/preprocessed/data_dong.csv", header = TRUE, fileEncoding = "CP949", encoding = "UTF-8")
+View(P)
 
-new_map <- fortify(shp_result, x)
-View(new_map) #id에 동별 코드가 들어가면 끝날거 같은데 어떻게 해야할지 모르겠음
+map <- read.csv("C:/data/preprocessed/EMD_202101/TL_SCCO_EMD_convert.csv")
+View(map)
+new_map <- fortify(map, region='emdcd')
+View(new_map)
+
+new_map$emdcd <- as.numeric(new_map$id)
+seoul_map <- new_map[new_map$id <= 11740,]
+
+P_merge <- merge(seoul_map, P, by='id')
+View(P_merge)
+ggplot() + geom_polygon(data = P_merge, aes(x=long, y=lat, group=group), fill = 'white', color='black')
