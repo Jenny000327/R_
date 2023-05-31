@@ -12,6 +12,7 @@ library(dplyr)
 library(treemapify)
 library(readr)
 library(RColorBrewer)
+#library(reshape2)
 
 # data_final_M 데이터.
 data_final_M <- read_csv("C:/data/preprocessed/data_final.csv")
