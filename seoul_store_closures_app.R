@@ -1,3 +1,8 @@
+#install.packages("gridExtra")
+#install.packages("reshape2")
+
+library(gridExtra)
+
 # 라이브러리 불러오기. Library Imports.
 library(shiny)
 library(shinydashboard)
@@ -10,7 +15,9 @@ library(RColorBrewer)
 
 # data_final_M 데이터.
 data_final_M <- read_csv("C:/data/preprocessed/data_final.csv")
-
+test_data <- read_csv("C:/data/preprocessed/test_data.csv") %>% as_tibble()
+eval_results_df <- read_csv("C:/data/preprocessed/eval_results_df.csv")
+#str(eval_results_df)
 
 #사용자 Ui 부분 
 ui <- dashboardPage(
@@ -111,13 +118,17 @@ ui <- dashboardPage(
       # Predict 폐업률 메뉴 
       tabItem(tabName = "predict",
               tabsetPanel(id = "predict_tab",
-                          tabPanel("Random Forest",
+                          tabPanel("RF 산점도 그래프",
                                    fluidRow(
                                      box(title = "Actual vs Predicted", plotOutput("rf_plot"), width = 12)
                                    )),
-                          tabPanel("Regression",
+                          tabPanel("RG 산점도 그래프",
                                    fluidRow(
                                      box(title = "Actual vs Predicted", plotOutput("reg_plot"), width = 12)
+                                   )),
+                          tabPanel("예측 성능 평가 지표",
+                                   fluidRow(
+                                     box(title = "Evaluation MEtrics for Each Model", plotOutput("Evaluation"), width = 12)
                                    ))
               )
       )
@@ -302,15 +313,87 @@ server <- function(input, output){
     
   })
   
-  # Random Forest
+  #Random Forest 산점도 그래프
   output$rf_plot <- renderPlot({
     
+    p_rf1 <- ggplot(test_data, aes(x = CLS_RATE, y = predictions_rf1)) +
+      geom_point() +
+      geom_abline(intercept = 0, slope = 1, color = "red") +
+      theme_minimal() +
+      ggtitle("Actual vs Predicted (RF1)") +
+      labs(x = "Actual", y = "Predicted") +
+      theme(plot.title = element_text(hjust = 0.5))
+
+   
+    p_rf2 <- ggplot(test_data, aes(x = CLS_RATE, y = predictions_rf2)) +
+      geom_point() +
+      geom_abline(intercept = 0, slope = 1, color = "red") +
+      theme_minimal() +
+      ggtitle("Actual vs Predicted (RF2)") +
+      labs(x = "Actual", y = "Predicted") +
+      theme(plot.title = element_text(hjust = 0.5))
+
+    p_rf3 <- ggplot(test_data, aes(x = CLS_RATE, y = predictions_rf3)) +
+      geom_point() +
+      geom_abline(intercept = 0, slope = 1, color = "red") +
+      theme_minimal() +
+      ggtitle("Actual vs Predicted (RF3)") +
+      labs(x = "Actual", y = "Predicted") +
+      theme(plot.title = element_text(hjust = 0.5))
+
+    p_rf4 <- ggplot(test_data, aes(x = CLS_RATE, y = predictions_rf4)) +
+      geom_point() +
+      geom_abline(intercept = 0, slope = 1, color = "red") +
+      theme_minimal() +
+      ggtitle("Actual vs Predicted (RF4)") +
+      labs(x = "Actual", y = "Predicted") +
+      theme(plot.title = element_text(hjust = 0.5))
+
+    grid.arrange(p_rf1, p_rf2, p_rf3, p_rf4, nrow = 2)
   })
   
-  # Regression
+  # Regression 산점도 그래프
   output$reg_plot <- renderPlot({
+
+    p_rg1 <- ggplot(test_data, aes(x = CLS_RATE, y = predictions_rg1)) +
+      geom_point() +
+      geom_abline(intercept = 0, slope = 1, color = "red") +
+      theme_minimal() +
+      ggtitle("Actual vs Predicted (RG1)") +
+      labs(x = "Actual", y = "Predicted") +
+      theme(plot.title = element_text(hjust = 0.5))
     
+    p_rg2 <- ggplot(test_data, aes(x = CLS_RATE, y = predictions_rg2)) +
+      geom_point() +
+      geom_abline(intercept = 0, slope = 1, color = "red") +
+      theme_minimal() +
+      ggtitle("Actual vs Predicted (RG2)") +
+      labs(x = "Actual", y = "Predicted") +
+      theme(plot.title = element_text(hjust = 0.5))
+    
+    p_rg3 <- ggplot(test_data, aes(x = CLS_RATE, y = predictions_rg3)) +
+      geom_point() +
+      geom_abline(intercept = 0, slope = 1, color = "red") +
+      theme_minimal() +
+      ggtitle("Actual vs Predicted (RG3)") +
+      labs(x = "Actual", y = "Predicted") +
+      theme(plot.title = element_text(hjust = 0.5))
+    
+    p_rg4 <- ggplot(test_data, aes(x = CLS_RATE, y = predictions_rg4)) +
+      geom_point() +
+      geom_abline(intercept = 0, slope = 1, color = "red") +
+      theme_minimal() +
+      ggtitle("Actual vs Predicted (RG4)") +
+      labs(x = "Actual", y = "Predicted") +
+      theme(plot.title = element_text(hjust = 0.5))
+    
+    grid.arrange(p_rg1, p_rg2, p_rg3, p_rg4, nrow = 2)
   })
+  
+  output$Evaluation <- renderPlot({
+
+  })
+  
 
 }
 

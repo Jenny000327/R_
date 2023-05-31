@@ -10,8 +10,10 @@ library(tidyr)
 library(tibble)
 
 # Load dataset
-df <- read_csv("C:/data/preprocessed/data_final.csv") %>% 
-  as_tibble() %>% select(-...1)
+df <- read_csv("C:/data/preprocessed/data_final.csv") %>% as_tibble() # %>% select(-`...1`)
+
+temp_df <- read_csv("C:/data/preprocessed/data_final.csv") %>% as_tibble()
+print(colnames(temp_df))
 
 #클러스터링할 변수 선택 
 #요인에 프랜차이즈 점포수 도 추가 해 봤어요 얘만 빠져있어가지구. 혹시 뺀 이유가 있다면 알려주세요.
@@ -176,3 +178,8 @@ ggplot(predictions_long, aes(x = CLS_RATE, y = prediction)) +
 
 
 eval_results_df
+View(test_data)
+write.csv(test_data,"C:/data/preprocessed/test_data.csv")
+
+df <- read_csv("C:/data/preprocessed/test_data.csv") %>% as_tibble()
+str(test_data)
