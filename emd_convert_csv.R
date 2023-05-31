@@ -45,7 +45,7 @@ head(shp_result)
 
 
 #마무리
-result <- left_join(id, group, by ='id')
+result <- left_join(id, group, by ='group')
 str(result)
 head(result)
 #csv로 저장
