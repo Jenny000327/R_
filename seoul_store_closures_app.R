@@ -12,6 +12,7 @@ library(dplyr)
 library(treemapify)
 library(readr)
 library(RColorBrewer)
+library(tidyr)  # tidyr 패키지 추가
 #library(reshape2)
 
 # data_final_M 데이터.
@@ -19,7 +20,7 @@ data_final_M <- read_csv("C:/data/preprocessed/data_final.csv")
 test_data <- read_csv("C:/data/preprocessed/test_data.csv") %>% as_tibble()
 eval_results_df <- read_csv("C:/data/preprocessed/eval_results_df.csv")
 #str(eval_results_df)
-
+View(eval_results_df)
 #사용자 Ui 부분 
 ui <- dashboardPage(
   
@@ -92,25 +93,25 @@ ui <- dashboardPage(
                           tabPanel("Cluster 1",
                                    fluidRow(
                                      box(title = "Table", DTOutput("table_cluster1"), width = 6),
-                                     box(title = "Bar", plotOutput("bar_cluster1"), width = 6),
+                                     box(title = "map", plotOutput("map_cluster1"), width = 6),
                                      box(title = "Description", verbatimTextOutput("desc_cluster1"), width = 12)
                                    )),
                           tabPanel("Cluster 2",
                                    fluidRow(
                                      box(title = "Table", DTOutput("table_cluster2"), width = 6),
-                                     box(title = "Bar", plotOutput("bar_cluster2"), width = 6),
+                                     box(title = "map", plotOutput("map_cluster2"), width = 6),
                                      box(title = "Description", verbatimTextOutput("desc_cluster2"), width = 12)
                                    )),
                           tabPanel("Cluster 3",
                                    fluidRow(
                                      box(title = "Table", DTOutput("table_cluster3"), width = 6),
-                                     box(title = "Bar", plotOutput("bar_cluster3"), width = 6),
+                                     box(title = "map", plotOutput("map_cluster3"), width = 6),
                                      box(title = "Description", verbatimTextOutput("desc_cluster3"), width = 12)
                                    )),
                           tabPanel("Cluster 4",
                                    fluidRow(
                                      box(title = "Table", DTOutput("table_cluster4"), width = 6),
-                                     box(title = "Bar", plotOutput("bar_cluster4"), width = 6),
+                                     box(title = "map", plotOutput("map_cluster4"), width = 6),
                                      box(title = "Description", verbatimTextOutput("desc_cluster4"), width = 12)
                                    ))
               )
@@ -273,7 +274,7 @@ server <- function(input, output){
   output$table_cluster1 <- renderDataTable({
     
   })
-  output$bar_cluster1 <- renderPlot({
+  output$map_cluster1 <- renderPlot({
     
   })
   output$desc_cluster1 <- renderText({
@@ -285,7 +286,7 @@ server <- function(input, output){
   output$table_cluster2 <- renderDataTable({
     
   })
-  output$bar_cluster2 <- renderPlot({
+  output$map_cluster2 <- renderPlot({
     
   })
   output$desc_cluster2 <- renderText({
@@ -296,7 +297,7 @@ server <- function(input, output){
   output$table_cluster3 <- renderDataTable({
     
   })
-  output$bar_cluster3 <- renderPlot({
+  output$map_cluster3 <- renderPlot({
     
   })
   output$desc_cluster3 <- renderText({
@@ -307,12 +308,13 @@ server <- function(input, output){
   output$table_cluster4 <- renderDataTable({
     
   })
-  output$bar_cluster4 <- renderPlot({
+  output$map_cluster4 <- renderPlot({
     
   })
   output$desc_cluster4 <- renderText({
     
   })
+  
   
   #Random Forest 산점도 그래프
   output$rf_plot <- renderPlot({
@@ -391,9 +393,41 @@ server <- function(input, output){
     grid.arrange(p_rg1, p_rg2, p_rg3, p_rg4, nrow = 2)
   })
   
+  
   output$Evaluation <- renderPlot({
-
+    # mse에 대한 그래프 
+    p_mse <- ggplot(eval_results_df, aes(x = ...1, y = mse, fill = ...1)) +
+      geom_bar(stat = "identity", position = "dodge") +
+      labs(x = "Model", y = "mse", fill = "Model") +
+      theme_bw() +
+      theme(legend.position = "top")
+    
+    # mae에 대한 그래프
+    p_mae <- ggplot(eval_results_df, aes(x = ...1, y = mae, fill = ...1)) +
+      geom_bar(stat = "identity", position = "dodge") +
+      labs(x = "Model", y = "mae", fill = "Model") +
+      theme_bw() +
+      theme(legend.position = "top")
+    
+    # mape에 대한 그래프
+    p_mape <- ggplot(eval_results_df, aes(x = ...1, y = mape, fill = ...1)) +
+      geom_bar(stat = "identity", position = "dodge") +
+      labs(x = "Model", y = "mape", fill = "Model") +
+      theme_bw() +
+      theme(legend.position = "top")
+    
+    # rmse에 대한 그래프
+    p_rmse <- ggplot(eval_results_df, aes(x = ...1, y = rmse, fill = ...1)) +
+      geom_bar(stat = "identity", position = "dodge") +
+      labs(x = "Model", y = "rmse", fill = "Model") +
+      theme_bw() +
+      theme(legend.position = "top")
+    
+    grid.arrange(p_mse, p_mae, p_mape, p_rmse, nrow = 2)
   })
+  
+  
+  
   
 
 }
