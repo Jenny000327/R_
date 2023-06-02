@@ -1,6 +1,63 @@
 .dataTables_wrapper {
-    background-color: #d1d7ea4D;
+    background-color: rgba(254, 249, 245, 0.8);
 }
 #dong_table .dataTables_wrapper {
-    background-color: ##c9b6d2; /* 이 부분에 원하는 색상의 hex 코드를 넣으세요. */
+    background-color: #c9b6d2;
 }
+body {
+  background-color: #D2B48C ;
+}
+
+ /* 대시보드 헤더 */
+.skin-blue .main-header .logo {
+  background-color: #C19A6B;
+  color: #654321
+  font-weight: bold;
+}
+
+/* 대시보드 헤더 마우스 호버 시 색상 변경 */
+.skin-blue .main-header .logo:hover {
+  background-color: #E8C9A7; /* 마우스 호버 시 색상 변경 */
+}
+
+ /* 대시보드 헤더 아이콘 옆 배경색 */
+.skin-blue .main-header .navbar {
+  background-color: #C19A6B; 
+}
+ /* 대시보드 헤더 아이콘 옆 배경색 */
+.skin-blue .main-header .navbar:hover  {
+  background-color: #E8C9A7; 
+}
+/*#D2B48C 
+/*#e6bc28
+/* #d1d7ea4D
+/* 대시보드 배경 */
+.skin-blue .content-wrapper {
+  background-color: rgba(254, 249, 245, 0.8); /* 더 밝은 파스텔 갈색으로 변경 */
+}
+
+/* 대시보드 메뉴 */
+
+.skin-blue .sidebar-menu li.active > a {
+  background-color: #D2B48D; /* 활성화된 메뉴의 배경색 (연갈색으로 변경) */
+}
+
+.skin-blue .sidebar-menu li > a {
+  color: rgba(254, 249, 245, 0.8); /* 메뉴 글꼴 색상 (연갈색으로 변경) */
+}
+.custom-box {
+  box-shadow: 0px 0px 15px rgba(0, 0, 0, 0.3);
+}
+/* Active tab background color */
+.nav .custom-tab.active, .nav .custom-tab.active:hover {
+    background-color: #fdfd96; /* Pastel yellow */
+    color: black;
+}
+
+/* Non-active tab background color */
+.nav .custom-tab, .nav .custom-tab:hover {
+    background-color: #f0f0f0; /* Light gray */
+    color: black;
+}
+
+
