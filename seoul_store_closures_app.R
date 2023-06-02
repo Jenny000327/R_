@@ -31,7 +31,7 @@ cluster_centers <- read_csv("C:/data/preprocessed/cluster_centers.csv")
 ui <- dashboardPage(
 
   dashboardHeader(title = "서울시 동별 폐업률"), #대시보드 해더
-
+                 
 
   #사이드 메뉴 부분
   dashboardSidebar(
@@ -53,8 +53,9 @@ ui <- dashboardPage(
       #Home 메뉴 (이 프로젝트에 대한 소개 더 추가! 사진도 넣구 글도 추가해주고 이 페이지가 처음 보이게 되는 페이지.)
       tabItem(tabName = "home",
               h2("서울시 동별 폐업률 분석"),
-              p("이 프로젝트는 서울시 동별 폐업률을 분석하는 것을 목표로 합니다.")),
-
+              p("이 프로젝트는 서울시 동별 폐업률을 분석하는 것을 목표로 합니다."),
+              tags$br(),
+              tags$h4('For whom ? : 예비 자영업자 , 창업 준비자')),
       # 현황 지도로 보기 메뉴 (메뉴 이름 변경?)
       # 현황 지도로 보기 메뉴
       tabItem(tabName = "map", # 이 메뉴 이름은 map
