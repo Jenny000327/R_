@@ -1,8 +1,3 @@
-#install.packages("gridExtra")
-#install.packages("reshape2")
-
-library(gridExtra)
-
 # 라이브러리 불러오기. Library Imports.
 library(shiny)
 library(shinydashboard)
@@ -13,17 +8,22 @@ library(treemapify)
 library(readr)
 library(RColorBrewer)
 library(tidyr)  # tidyr 패키지 추가
+library(gridExtra)
+
 #library(reshape2)
 
 # data_final_M 데이터.
 data_final_M <- read_csv("C:/data/preprocessed/data_final.csv")
 test_data <- read_csv("C:/data/preprocessed/test_data.csv") %>% as_tibble()
 eval_results_df <- read_csv("C:/data/preprocessed/eval_results_df.csv")
+cluster_data <- read_csv("C:/data/preprocessed/cluster.csv")
 #str(eval_results_df)
-View(eval_results_df)
+#View(eval_results_df)
+
 #사용자 Ui 부분 
 ui <- dashboardPage(
-  
+ 
+
   dashboardHeader(title = "서울시 동별 폐업률"), #대시보드 해더
   
   #사이드 메뉴 부분 
@@ -70,7 +70,12 @@ ui <- dashboardPage(
       tabItem(tabName = "gu",
               fluidRow(
                 # Indicators box [이 박스 안에는 정보(요인들) SelectInput기능과  "구" 별 tree map이 들어있다.]
-                box(title = "Indicators", selectInput("indicator_gu", "Choose an indicator", choices = c("MK_NUM", "SMK_NUM", "OP_MK_NUM", "CLS_MK_NUM", "FRC_MK_NUM", "DT", "IN", "OUT", "PARKING")), plotOutput("gu_treemap"), width = 6),
+                box(title = "Indicators", selectInput("indicator_gu", "Choose an indicator", 
+                                                      choices = c("점포수" = "MK_NUM", "유사업종점포수" = "SMK_NUM", "개업점포수" = "OP_MK_NUM", 
+                                                                  "폐업점포수" = "CLS_MK_NUM", "프랜차이즈 점포수" = "FRC_MK_NUM", 
+                                                                  "인구밀도" = "DT", "유동인구 유입량" = "IN", 
+                                                                  "유동인구 유출량" = "OUT", "주차장 수" = "PARKING"))
+                    , plotOutput("gu_treemap"), width = 6),
                 # GU 박스[구 selectInput기능과"구" 별 막대 그래프 가 들어있다.]
                 box(title = "Gu", selectInput("gu", "Choose a Gu", choices = unique(data_final_M$SIGUNGU_NM)), plotOutput("bar_gu"), width = 6)),
               fluidRow(
@@ -81,7 +86,10 @@ ui <- dashboardPage(
       tabItem(tabName = "dong", 
               fluidRow(
                 #Indicators box [정보(요인들) SelectInput 기능과 "동" 별 tree map 이 들어있다.] 
-                box(title = "Indicators", selectInput("indicator_dong", "Choose an indicator", choices = c("MK_NUM", "SMK_NUM", "OP_MK_NUM", "CLS_MK_NUM", "FRC_MK_NUM", "DT", "IN", "OUT", "PARKING")), plotOutput("dong_treemap"),width = 6),
+                box(title = "Indicators", selectInput("indicator_dong", "Choose an indicator", choices = c("점포수" = "MK_NUM", "유사업종점포수" = "SMK_NUM", "개업점포수" = "OP_MK_NUM", 
+                                                                                                           "폐업점포수" = "CLS_MK_NUM", "프랜차이즈 점포수" = "FRC_MK_NUM", 
+                                                                                                           "인구밀도" = "DT", "유동인구 유입량" = "IN", 
+                                                                                                           "유동인구 유출량" = "OUT", "주차장 수" = "PARKING")), plotOutput("dong_treemap"),width = 6),
                 #"동" 별 막대그래프 bar
                 box(title = "bar",plotOutput("bar_dong"),width = 6)),
               fluidRow(
@@ -92,26 +100,26 @@ ui <- dashboardPage(
               tabsetPanel(id = "clustering_tab",
                           tabPanel("Cluster 1",
                                    fluidRow(
-                                     box(title = "Table", DTOutput("table_cluster1"), width = 6),
-                                     box(title = "map", plotOutput("map_cluster1"), width = 6),
+                                     box(title = "Table", DTOutput("table_cluster1"), width = 12),
+                                     box(title = "map", plotOutput("map_cluster1"), width = 12),
                                      box(title = "Description", verbatimTextOutput("desc_cluster1"), width = 12)
                                    )),
                           tabPanel("Cluster 2",
                                    fluidRow(
-                                     box(title = "Table", DTOutput("table_cluster2"), width = 6),
-                                     box(title = "map", plotOutput("map_cluster2"), width = 6),
+                                     box(title = "Table", DTOutput("table_cluster2"), width = 12),
+                                     box(title = "map", plotOutput("map_cluster2"), width = 12),
                                      box(title = "Description", verbatimTextOutput("desc_cluster2"), width = 12)
                                    )),
                           tabPanel("Cluster 3",
                                    fluidRow(
-                                     box(title = "Table", DTOutput("table_cluster3"), width = 6),
-                                     box(title = "map", plotOutput("map_cluster3"), width = 6),
+                                     box(title = "Table", DTOutput("table_cluster3"), width = 12),
+                                     box(title = "map", plotOutput("map_cluster3"), width = 12),
                                      box(title = "Description", verbatimTextOutput("desc_cluster3"), width = 12)
                                    )),
                           tabPanel("Cluster 4",
                                    fluidRow(
-                                     box(title = "Table", DTOutput("table_cluster4"), width = 6),
-                                     box(title = "map", plotOutput("map_cluster4"), width = 6),
+                                     box(title = "Table", DTOutput("table_cluster4"), width = 12),
+                                     box(title = "map", plotOutput("map_cluster4"), width = 12),
                                      box(title = "Description", verbatimTextOutput("desc_cluster4"), width = 12)
                                    ))
               )
@@ -269,53 +277,76 @@ server <- function(input, output){
       arrange(-get(input$indicator_dong)) #사용자가 선택한 정보(요인)을 기준으로 내림차순 정렬
   })
   
+  # 컬럼 이름 변경 및 필요한 컬럼만 선택
+  # 데이터를 읽고, 클러스터를 만들고, 변형.
+  cluseter_data_re <- reactive({
+    cluster_data %>%
+      select(cluster, SIGUNGU_NM, DONG_NM, MK_NUM, OP_MK_NUM, CLS_MK_NUM, SMK_NUM, FRC_MK_NUM, OP_RATE, DT, IN, OUT, PARKING) %>%
+      rename(
+        "클러스터" = cluster,
+        "시군구 명" = SIGUNGU_NM,
+        "동 이름" = DONG_NM,
+        "점포수" = MK_NUM,
+        "개업점포수" = OP_MK_NUM,
+        "폐업점포수" = CLS_MK_NUM,
+        "유사업종점포수" = SMK_NUM,
+        "프랜차이즈 점포수" = FRC_MK_NUM,
+        "개업률" = OP_RATE,
+        "인구밀도" = DT,
+        "유동인구 유입량" = IN,
+        "유동인구 유출량" = OUT,
+        "주차장 수" = PARKING
+      ) %>%
+      mutate(개업률 = round(개업률, 3))
+  })
+  
+  cluseter_data_re <- cluseter_data_re 
+  
+  
+  # 클러스터링끼리 그룹화한 테이블
+  test_data_cluster1 <- reactive({ cluseter_data_re()[cluseter_data_re()$클러스터 == 1,] })
+  test_data_cluster2 <- reactive({ cluseter_data_re()[cluseter_data_re()$클러스터 == 2,] })
+  test_data_cluster3 <- reactive({ cluseter_data_re()[cluseter_data_re()$클러스터 == 3,] })
+  test_data_cluster4 <- reactive({ cluseter_data_re()[cluseter_data_re()$클러스터 == 4,] })
+  
+  # 테이블 출력.
+  output$table_cluster1 <- renderDT({ test_data_cluster1() })
+  output$table_cluster2 <- renderDT({ test_data_cluster2() })
+  output$table_cluster3 <- renderDT({ test_data_cluster3() })
+  output$table_cluster4 <- renderDT({ test_data_cluster4() })
+  
+  # map 박스
+  output$map_cluster1 <- renderPlot({ })
+  output$map_cluster2 <- renderPlot({ })
+  output$map_cluster3 <- renderPlot({ })
+  output$map_cluster4 <- renderPlot({ })
+  
+  
+  #클러스터링 결과 분석 
+  # 클러스터에 대한 설명  #여기 설명 부분은 읽어보구 수정해쥬세요!!!!
+  output$desc_cluster1 <- renderText({ " 클러스터 1: 상업적으로 활발하지만 주차 시설과 거주 인구가 상대적으로 부족한 지역
+  
+  점포 수(MK_NUM), 유사업종 점포 수(SMK_NUM), 프랜차이즈 점포 수(FRC_MK_NUM)가 매우 높은 반면, 인구 밀도(DT)와 주차장 수(PARKING)는 비교적 낮은 편이다.
+  클러스터는 상업적으로 매우 활발한 지역이지만 주차 시설이나 거주 인구는 상대적으로 부족한 것으로 보인다.
+  이런 지역에서는 요식업 폐업률이 경쟁력에 큰 영향을 받을 수 있으며, 주차 시설의 부족도 폐업률에 영향을 줄 수 있다." })
+  
+  output$desc_cluster2 <- renderText({ "클러스터 2: 높은 인구 밀도와 유동인구에 비해 상업 활동이 덜 발달한 지역
+  
+  인구 밀도(DT)가 특히 높고, 유동인구 유입량(IN)과 유출량(OUT)이 높은 편이다.그러나 점포 수와 프랜차이즈 점포 수는 비교적 낮다.
+  이런 지역에서는 인구 밀도가 높음에도 불구하고 상업 활동이 비교적 덜 발달하였을 가능성이 있다." })
+  
+  output$desc_cluster3 <- renderText({ " 클러스터 3: 상업적으로 활발하면서도 유동인구에 크게 의존하는 지역
+  
+  점포 수, 유사업종 점포 수, 프랜차이즈 점포 수가 높고, 인구 밀도는 중간 정도이다.유동인구 유입량과 유출량이 높은 편
+  이런 지역은 상업적으로 활발하면서도 인구 밀도가 높지 않은 지역으로, 고객 유입이 주로 유동인구에 의존하는 것으로 보인다. 
+  이런 지역에서는 요식업 폐업률이 유동인구의 변화에 영향을 많이 받을 수 있다." })
+  
+  output$desc_cluster4 <- renderText({ " 클러스터 4: 주거와 상업이 잘 혼합된 높은 인구 밀도와 주차 시설이 충분한 지역
+  
+  인구 밀도(DT)와 주차장 수(PARKING)가 높은 편이며, 점포 수는 중간 정도.
+  이런 지역은 주거 지역과 상업 지역이 잘 혼합된 지역일 수 있다.  요식업 폐업률이 거주 인구와 주차 시설에 크게 영향을 받을 수 있다." })
+ 
 
-  # Cluster 1
-  output$table_cluster1 <- renderDataTable({
-    
-  })
-  output$map_cluster1 <- renderPlot({
-    
-  })
-  output$desc_cluster1 <- renderText({
-    
-  })
-  
-  
-  # Cluster 2
-  output$table_cluster2 <- renderDataTable({
-    
-  })
-  output$map_cluster2 <- renderPlot({
-    
-  })
-  output$desc_cluster2 <- renderText({
-    
-  })
-  
-  # Cluster 3
-  output$table_cluster3 <- renderDataTable({
-    
-  })
-  output$map_cluster3 <- renderPlot({
-    
-  })
-  output$desc_cluster3 <- renderText({
-    
-  })
-  
-  # Cluster 4
-  output$table_cluster4 <- renderDataTable({
-    
-  })
-  output$map_cluster4 <- renderPlot({
-    
-  })
-  output$desc_cluster4 <- renderText({
-    
-  })
-  
-  
   #Random Forest 산점도 그래프
   output$rf_plot <- renderPlot({
     

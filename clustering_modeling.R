@@ -1,3 +1,4 @@
+
 #모델링 코드들 가영이가 한것대로 추가하구 정리만 했오!!
 # Libraries
 library(cluster)
@@ -16,7 +17,6 @@ temp_df <- read_csv("C:/data/preprocessed/data_final.csv") %>% as_tibble()
 print(colnames(temp_df))
 
 #클러스터링할 변수 선택 
-#요인에 프랜차이즈 점포수 도 추가 해 봤어요 얘만 빠져있어가지구. 혹시 뺀 이유가 있다면 알려주세요.
 df_cluster <- df %>% dplyr::select(MK_NUM,SMK_NUM,FRC_MK_NUM,DT,IN,OUT,PARKING)
 
 # K-means Clustering
@@ -50,6 +50,8 @@ print(cluster_centers) # 클러스터 중심 확인
 
 df <- df %>% mutate(cluster = as.factor(cluster_labels))
 
+#View(df)
+write.csv(df,"C:/data/preprocessed/cluster.csv")
 
 #클러스터링 결과 분석 
 # 클러스터 1: 점포 수(MK_NUM), 유사업종 점포 수(SMK_NUM), 프랜차이즈 점포 수(FRC_MK_NUM)가 매우 높은 반면, 인구 밀도(DT)와 주차장 수(PARKING)는 비교적 낮은 편이다.
@@ -65,6 +67,7 @@ df <- df %>% mutate(cluster = as.factor(cluster_labels))
 
 # 클러스터 4: 인구 밀도(DT)와 주차장 수(PARKING)가 높은 편이며, 점포 수는 중간 정도.
 #             이런 지역은 주거 지역과 상업 지역이 잘 혼합된 지역일 수 있다.  요식업 폐업률이 거주 인구와 주차 시설에 크게 영향을 받을 수 있다.
+
 
 #[정리]
 #클러스터 1: 상업적으로 활발하지만 주차 시설과 거주 인구가 상대적으로 부족한 지역
@@ -129,6 +132,7 @@ print(eval_results_df)
 # 4. rmse (Root Mean Squared Error): mse의 제곱근으로, 실제 값과 예측 값의 차이를 제곱해 평균한 후 제곱근을 취한 값, 큰 오차에 대해 더 큰 패널티를 부여하는 특성이 있다.
 # 
 # 네 가지 지표를 모두 사용하는 이유: 모델의 성능을 다양한 측면에서 평가하고, 그 특성에 따른 이점을 모두 활용하기 위해.
+
 # mse, rmse:  큰 오차에 대해 더 큰 패널티를 부여하므로, 크게 틀린 예측을 줄이는 데 중점을 둔 모델을 선택하는데 도움이 된다.
 # mae, mape:  예측 오차의 절대적인 크기나 비율을 직관적으로 보여주므로, 모델의 전반적인 성능을 이해하는 데 도움이 된다.
 
@@ -178,8 +182,8 @@ ggplot(predictions_long, aes(x = CLS_RATE, y = prediction)) +
 
 
 eval_results_df
-View(test_data)
+write.csv(eval_results_df,"C:/data/preprocessed/eval_results_df.csv")
 write.csv(test_data,"C:/data/preprocessed/test_data.csv")
-
+write.csv(test_data,"C:/data/preprocessed/train_data.csv")
 df <- read_csv("C:/data/preprocessed/test_data.csv") %>% as_tibble()
 str(test_data)
