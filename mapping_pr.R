@@ -17,11 +17,11 @@ list_dong$DONG_CD <- sapply(list_dong$DONG_CD, as.character )
 head(list_dong)
 
 ## 행정동 지도 그리기 (map outline data)
-h <- rgdal::readOGR('C:/data/preprocessed/emd_mapdata.shp')
+h <- rgdal::readOGR('C:/data/preprocessed/map/emd_mapdata.shp')
 h <- spTransform(h, CRS('+proj=longlat'))
 h_map <- fortify(h)
 head(h_map)
-write.csv(h_map,"C:/data/preprocessed/emd_mapdata.csv")
+write.csv(h_map,"C:/data/preprocessed/map/emd_mapdata.csv")
 
 ggplot() + geom_polygon(data = h_map, aes(x = long, y = lat, group = group),
                         fill = 'white', colour = 'black') ## 전국 읍동리 지도 
