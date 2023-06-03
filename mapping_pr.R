@@ -52,5 +52,5 @@ ggplot() + geom_polygon(data = hmap_cluster, aes(x = long, y = lat, group = grou
 ggplot() + geom_polygon(data = hmap_testdata, aes(x = long, y = lat, group = group, fill = pop_sum),
                         color = 'gray') + scale_fill_gradient(low = "#FFCCFF", high = "#6600CC", 
                                                               space = "Lab", guide = "colourbar") + ggtitle('test data')
-
+##
 
