@@ -10,8 +10,8 @@ library(ggplot2)
 library(tidyr)
 library(tibble)
 
-#setwd("C:/")
-setwd("/Users/gayeongkim/Desktop/")
+setwd("C:/")
+#setwd("Users/gayeongkim/Desktop/")
 
 
 # Load dataset
@@ -192,5 +192,4 @@ write.csv(test_data,"data/preprocessed/train_data.csv")
 write.csv(df,"data/preprocessed/cluster.csv")
 write.csv(cluster_centers,"data/preprocessed/cluster_centers.csv")
 
-# df <- read_csv("data/preprocessed/test_data.csv") %>% as_tibble()
-# str(test_data)
+
