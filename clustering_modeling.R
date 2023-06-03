@@ -47,12 +47,11 @@ print(cluster_centers) # 클러스터 중심 확인
 # K-means 알고리즘은 초기에 무작위로 선택된 K개의 중심을 기반으로 클러스터를 형성한다.
 #그런 다음, 알고리즘이 반복적으로 수행되면서 각 데이터 포인트를 가장 가까운 중심에 할당하고,
 #클러스터의 중심을 다시 계산한다. 중심은 해당 클러스터 내의 모든 데이터 포인트의 평균 위치로 이동하게 된다.
-write.csv(cluster_centers,"C:/data/preprocessed/cluster_centers.csv")
 
 df <- df %>% mutate(cluster = as.factor(cluster_labels))
 
 #View(df)
-write.csv(df,"C:/data/preprocessed/cluster.csv")
+
 
 #클러스터링 결과 분석 
 # 클러스터 1: 점포 수(MK_NUM), 유사업종 점포 수(SMK_NUM), 프랜차이즈 점포 수(FRC_MK_NUM)가 매우 높은 반면, 인구 밀도(DT)와 주차장 수(PARKING)는 비교적 낮은 편이다.
@@ -186,5 +185,8 @@ eval_results_df
 write.csv(eval_results_df,"C:/data/preprocessed/eval_results_df.csv")
 write.csv(test_data,"C:/data/preprocessed/test_data.csv")
 write.csv(test_data,"C:/data/preprocessed/train_data.csv")
-df <- read_csv("C:/data/preprocessed/test_data.csv") %>% as_tibble()
-str(test_data)
+write.csv(df,"C:/data/preprocessed/cluster.csv")
+write.csv(cluster_centers,"C:/data/preprocessed/cluster_centers.csv")
+
+# df <- read_csv("C:/data/preprocessed/test_data.csv") %>% as_tibble()
+# str(test_data)
