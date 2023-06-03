@@ -48,6 +48,7 @@ print(cluster_centers) # 클러스터 중심 확인
 #그런 다음, 알고리즘이 반복적으로 수행되면서 각 데이터 포인트를 가장 가까운 중심에 할당하고,
 #클러스터의 중심을 다시 계산한다. 중심은 해당 클러스터 내의 모든 데이터 포인트의 평균 위치로 이동하게 된다.
 write.csv(cluster_centers,"C:/data/preprocessed/cluster_centers.csv")
+
 df <- df %>% mutate(cluster = as.factor(cluster_labels))
 
 #View(df)
