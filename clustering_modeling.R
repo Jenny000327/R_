@@ -10,10 +10,14 @@ library(ggplot2)
 library(tidyr)
 library(tibble)
 
-# Load dataset
-df <- read_csv("C:/data/preprocessed/data_final.csv") %>% as_tibble() # %>% select(-`...1`)
+#setwd("C:/")
+setwd("/Users/gayeongkim/Desktop/")
 
-temp_df <- read_csv("C:/data/preprocessed/data_final.csv") %>% as_tibble()
+
+# Load dataset
+df <- read_csv("data/preprocessed/data_final.csv") %>% as_tibble() # %>% select(-`...1`)
+
+temp_df <- read_csv("data/preprocessed/data_final.csv") %>% as_tibble()
 print(colnames(temp_df))
 
 #클러스터링할 변수 선택 
@@ -182,11 +186,11 @@ ggplot(predictions_long, aes(x = CLS_RATE, y = prediction)) +
 
 
 eval_results_df
-write.csv(eval_results_df,"C:/data/preprocessed/eval_results_df.csv")
-write.csv(test_data,"C:/data/preprocessed/test_data.csv")
-write.csv(test_data,"C:/data/preprocessed/train_data.csv")
-write.csv(df,"C:/data/preprocessed/cluster.csv")
-write.csv(cluster_centers,"C:/data/preprocessed/cluster_centers.csv")
+write.csv(eval_results_df,"data/preprocessed/eval_results_df.csv")
+write.csv(test_data,"data/preprocessed/test_data.csv")
+write.csv(test_data,"data/preprocessed/train_data.csv")
+write.csv(df,"data/preprocessed/cluster.csv")
+write.csv(cluster_centers,"data/preprocessed/cluster_centers.csv")
 
-# df <- read_csv("C:/data/preprocessed/test_data.csv") %>% as_tibble()
+# df <- read_csv("data/preprocessed/test_data.csv") %>% as_tibble()
 # str(test_data)

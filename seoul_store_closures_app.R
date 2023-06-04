@@ -11,18 +11,19 @@ library(RColorBrewer)
 library(tidyr)  # tidyr 패키지 추가
 library(gridExtra)
 library(shinythemes)
-
-
 #library(reshape2)
 
-# data_final_M 데이터.
-data_final_M <- read_csv("C:/data/preprocessed/data_final.csv")
-test_data <- read_csv("C:/data/preprocessed/test_data.csv") %>% as_tibble()
-train_data <- read_csv("C:/data/preprocessed/train_data.csv") %>% as_tibble()
+setwd("C:/")
+#setwd("/Users/gayeongkim/Desktop/")
 
-eval_results_df <- read_csv("C:/data/preprocessed/eval_results_df.csv")
-cluster_data <- read_csv("C:/data/preprocessed/cluster.csv")
-cluster_centers <- read_csv("C:/data/preprocessed/cluster_centers.csv")
+# data_final_M 데이터.
+data_final_M <- read_csv("data/preprocessed/data_final.csv")
+test_data <- read_csv("data/preprocessed/test_data.csv") %>% as_tibble()
+train_data <- read_csv("data/preprocessed/train_data.csv") %>% as_tibble()
+
+eval_results_df <- read_csv("data/preprocessed/eval_results_df.csv")
+cluster_data <- read_csv("data/preprocessed/cluster.csv")
+cluster_centers <- read_csv("data/preprocessed/cluster_centers.csv")
 
 #str(eval_results_df)
 #View(eval_results_df)
@@ -47,7 +48,7 @@ ui <- dashboardPage(
 
   #바디 부분
   dashboardBody(
-    includeCSS("www/custom.css"),
+    includeCSS("Git_R/R_/www/custom.css"),
 
     tabItems(
       #Home 메뉴 (이 프로젝트에 대한 소개 더 추가! 사진도 넣구 글도 추가해주고 이 페이지가 처음 보이게 되는 페이지.)
