@@ -1,5 +1,5 @@
 # # 라이브러리 불러오기. Library Imports.
-#install.packages("shinythemes")
+#install.packages("corrplot")
 library(shiny)
 library(shinydashboard)
 library(DT)
@@ -11,7 +11,7 @@ library(RColorBrewer)
 library(tidyr)  # tidyr 패키지
 library(gridExtra)
 library(shinythemes)
-
+library(corrplot)
 
 # data_final_M 데이터.
 data_final_M <- read_csv("C:/data/preprocessed/data_final.csv")
@@ -46,6 +46,7 @@ ui <- dashboardPage(
   dashboardSidebar(
     sidebarMenu(
       menuItem("Home", tabName = "home", icon = icon("home")),
+      menuItem("Open & Closed Rates", tabName = "rates", icon = icon("bar-chart")),  # 새로운 메뉴 추가
       menuItem("현황 지도로 보기", tabName = "map", icon = icon("globe")),
       menuItem("Total Indicator by Gu", tabName = "gu", icon = icon("chart-bar")), #이거 이름이 바껴서안된거였음.
       menuItem("Total Indicator by Dong", tabName = "dong", icon = icon("chart-bar")),
@@ -56,10 +57,9 @@ ui <- dashboardPage(
 
   #바디 부분
   dashboardBody(
-    
     includeCSS("www/custom.css"),
     #includeCSS("Git_R/R_/www/custom.css"),
-
+#getwd()
 
     tabItems(
       #Home 메뉴 (이 프로젝트에 대한 소개 더 추가! 사진도 넣구 글도 추가해주고 이 페이지가 처음 보이게 되는 페이지.)
@@ -68,6 +68,18 @@ ui <- dashboardPage(
               p("이 프로젝트는 서울시 동별 폐업률을 분석하는 것을 목표로 합니다."),
               tags$br(),
               tags$h4('For whom ? : 예비 자영업자 , 창업 준비자')),
+      
+      
+      tabItem(tabName = "rates",
+              fluidRow(
+                box(title = "개업률 분포", class = "custom-box", plotOutput("open_rate_distribution"), width = 6),
+                box(title = "폐업률 분포", class = "custom-box", plotOutput("closed_rate_distribution"), width = 6)
+              ),
+              fluidRow(
+                box(title = "Table", class = "custom-box", DTOutput("table_rates"), width = 12)
+              )
+      ),
+      
       # 현황 지도로 보기 메뉴 (메뉴 이름 변경?)
       # 현황 지도로 보기 메뉴
       tabItem(tabName = "map", # 이 메뉴 이름은 map
@@ -106,42 +118,49 @@ ui <- dashboardPage(
       tabItem(tabName = "dong",
               fluidRow(
                 #Indicators box [정보(요인들) SelectInput 기능과 "동" 별 tree map 이 들어있다.]
-                box(title = "Indicators",class = "custom-box", selectInput("indicator_dong", "Choose an indicator", choices = c("점포수" = "MK_NUM", "유사업종점포수" = "SMK_NUM", "개업점포수" = "OP_MK_NUM",
+                box(title = "Indicators",class = "custom-box",  style = "height: 500px;", selectInput("indicator_dong", "Choose an indicator", choices = c("점포수" = "MK_NUM", "유사업종점포수" = "SMK_NUM", "개업점포수" = "OP_MK_NUM",
                                                                                                            "폐업점포수" = "CLS_MK_NUM", "프랜차이즈 점포수" = "FRC_MK_NUM",
                                                                                                            "인구밀도" = "DT", "유동인구 유입량" = "IN",
                                                                                                            "유동인구 유출량" = "OUT", "주차장 수" = "PARKING")), plotOutput("dong_treemap"),width = 6),
                 #"동" 별 막대그래프 bar
-                box(title = "bar",class = "custom-box",plotOutput("bar_dong"),width = 6)),
+                box(title = "bar",class = "custom-box", style = "height: 500px;", plotOutput("bar_dong"),width = 6)),
               fluidRow(
                 #"동" 별 테이블
-                box(title = "table",class = "custom-box",DTOutput("table_dong"), width = 12 ))),
+                box(title = "table",class = "custom-box",DTOutput("table_dong"), width = 12 )),
+              fluidRow(
+                box(title = "Correlation plot", class = "custom-box", plotOutput("correlation_plot"), width = 6),
+                box(title = "Correlation plot", class = "custom-box", plotOutput("correlation_plot02"), width = 6)
+              )),
       
       # 클러스터링에 대한 메뉴
       tabItem(tabName = "clustering",
               tabsetPanel(id = "clustering_tab",
                           tabPanel("Cluster 1", class = "custom-tab",
                                    fluidRow(
+                                     box(title = "Description",class = "custom-box", verbatimTextOutput("desc_cluster1"), width = 12),
                                      box(title = "map",class = "custom-box", plotOutput("map_cluster1"), width = 8),
-                                     box(title = "Description",class = "custom-box", verbatimTextOutput("desc_cluster1"), width = 4),
+                                     box(title = "cluster_centers",class = "custom-box", plotOutput("centers"), width = 4),
                                      box(title = "Table", class = "custom-box",DTOutput("table_cluster1"), width = 12),
-                                     box(title = "Variable Importance", class = "custom-box", plotOutput("pct_chart_cluster1"), width = 12)
                                    )),
                           tabPanel("Cluster 2",class = "custom-tab",
                                    fluidRow(
+                                     box(title = "Description",class = "custom-box", verbatimTextOutput("desc_cluster2"), width = 12),
                                      box(title = "map",class = "custom-box", plotOutput("map_cluster2"), width = 8),
-                                     box(title = "Description",class = "custom-box", verbatimTextOutput("desc_cluster2"), width = 4),
+                                     box(title = "cluster_centers",class = "custom-box", plotOutput("centers"), width = 4),
                                      box(title = "Table", class = "custom-box",DTOutput("table_cluster2"), width = 12)
                                    )),
                           tabPanel("Cluster 3",class = "custom-tab",
                                    fluidRow(
+                                     box(title = "Description",class = "custom-box", verbatimTextOutput("desc_cluster3"), width = 12),
                                      box(title = "map",class = "custom-box", plotOutput("map_cluster3"), width = 8),
-                                     box(title = "Description",class = "custom-box", verbatimTextOutput("desc_cluster3"), width = 4),
+                                     box(title = "cluster_centers",class = "custom-box", plotOutput("centers"), width = 4),
                                      box(title = "Table", class = "custom-box",DTOutput("table_cluster3"), width = 12)
                                    )),
                           tabPanel("Cluster 4",class = "custom-tab",
                                    fluidRow(
-                                     box(title = "map", class = "custom-box",plotOutput("map_cluster4"), width = 8),
-                                     box(title = "Description",class = "custom-box", verbatimTextOutput("desc_cluster4"), width = 4),
+                                     box(title = "Description",class = "custom-box", verbatimTextOutput("desc_cluster4"), width = 12),
+                                     box(title = "map",class = "custom-box", plotOutput("map_cluster4"), width = 8),
+                                     box(title = "cluster_centers",class = "custom-box", plotOutput("centers"), width = 4),
                                      box(title = "Table", class = "custom-box",DTOutput("table_cluster4"), width = 12)
                                    ))
               )
@@ -189,6 +208,33 @@ ui <- dashboardPage(
 #서버 부분
 server <- function(input, output){
   
+  # Open rates distribution
+  output$open_rate_distribution <- renderPlot({
+    # 개업률 분포 그리기
+    ggplot(data_final_M, aes(x=OP_RATE)) +
+      geom_histogram(bins=30, fill='#aec6cf', color='black') +
+      labs(x='개업률', y='Count', title='개업률 분포') +
+      theme_minimal()
+  })
+  
+  # Closed rates distribution
+  output$closed_rate_distribution <- renderPlot({
+    # 폐업률 분포 그리기
+    ggplot(data_final_M, aes(x=CLS_RATE)) +
+      geom_histogram(bins=30, fill='#aec6cf', color='black') +
+      labs(x='폐업률', y='Count', title='폐업률 분포') +
+      theme_minimal()
+  })
+  
+  # Rates table
+  output$table_rates <- renderDT({
+    # 개업률과 폐업률을 포함한 데이터프레임 생성
+    rates_data <- data_final_M %>% 
+      select(SIGUNGU_NM, DONG_NM, OP_RATE, CLS_RATE)
+    
+    datatable(rates_data, options = list(pageLength = 25))
+  })
+  
   #지도 부분 
   
   # Image rendering 
@@ -226,7 +272,7 @@ server <- function(input, output){
     )
   
   
-#  data_final_M_grouped로 테이블 렌더링 (지도 밑에있는 테이블 table_map)
+  #  data_final_M_grouped로 테이블 렌더링 (지도 밑에있는 테이블 table_map)
   # output$table_map <- renderDataTable({
   #   data_final_M_grouped %>%
   #     dplyr::select(SIGUNGU_NM, MK_NUM, CLS_MK_NUM, OP_MK_NUM) %>%
@@ -246,57 +292,7 @@ server <- function(input, output){
   })
   
   
-
   
-  
-  
-# -----
-  # 
-  # #구에 대한 정보 있는 메뉴 부분
-  # 
-  # # GU related rendering 구와 관련된 코드들(트리맵, 막대그래프, 테이블)
-  # output$gu_treemap <- renderPlot({
-  #   df <- data_final_M %>%
-  #     group_by(SIGUNGU_NM) %>%
-  #     summarise(total = sum(get(input$indicator_gu))) %>%
-  #     ungroup()
-  #   
-  #   ggplot(df, aes(area = total, label = SIGUNGU_NM, fill = total)) +
-  #     geom_treemap() +
-  #     geom_treemap_text(fontface = "italic", place = "center", grow = TRUE, color = "white") +
-  #     scale_fill_gradient(low = "lightblue", high = "darkblue") +
-  #     theme_minimal() +
-  #     labs(title = paste("Treemap of", input$indicator_gu, "by Gu"), fill = input$indicator_gu)
-  # })
-  # 
-  # 
-  # # 막대그래프
-  # output$bar_gu <- renderPlot({
-  #   gu_selected <- data_final_M %>% filter(SIGUNGU_NM == input$gu)
-  #   ggplot(gu_selected, aes(x = reorder(factor(DONG_NM), -get(input$indicator_gu)), y = get(input$indicator_gu), fill = get(input$indicator_gu))) +
-  #     geom_bar(stat = "identity") +
-  #     scale_fill_gradient(low = "lightblue", high = "darkblue") +
-  #     theme(axis.text.x = element_text(angle = 90, hjust = 1)) +
-  #     labs(x = "Dong", y = input$indicator_gu)
-  # })
-  # 
-  # # 테이블(사용자가 선택한 구로 필터 걸어서 만든 테이블)
-  # output$table_gu <- DT::renderDataTable({
-  #   datatable(
-  #     data_final_M %>%
-  #       filter(SIGUNGU_NM == input$gu) %>%
-  #       dplyr::select(SIGUNGU_NM, DONG_NM, all_of(input$indicator_gu)) %>%
-  #       arrange(-get(input$indicator_gu)), 
-  #     options = list(
-  #       columnDefs = list(
-  #         list(targets = "_all", className = "dt-center")
-  #       )
-  #     )
-  #   )
-  # })
-  # 
-  # 
-  # 
   # GU related rendering 구와 관련된 코드들(트리맵, 막대그래프, 테이블)
   output$gu_treemap <- renderPlot({
     df <- data_final_M %>%
@@ -328,7 +324,8 @@ server <- function(input, output){
     datatable(
       data_final_M %>%
         filter(SIGUNGU_NM == input$gu) %>%
-        dplyr::select(SIGUNGU_NM, DONG_NM, all_of(input$indicator_gu)) %>%
+        dplyr::select(SIGUNGU_NM, DONG_NM, all_of(input$indicator_gu),CLS_RATE) %>% ###CLS_RATE
+        mutate(CLS_RATE = round(CLS_RATE, 4)) %>%
         arrange(-get(input$indicator_gu)), 
       options = list(
         columnDefs = list(
@@ -338,8 +335,8 @@ server <- function(input, output){
     )
   })
   
-  # 동에 대한 정보 있는 메뉴 부분
   
+  # 동에 대한 정보 있는 메뉴 부분
   # DONG related rendering 동과 관련된 코드들 (트리맵, 막대그래프, 테이블)
   output$dong_treemap <- renderPlot({
     dong_top20 <- data_final_M %>%
@@ -354,7 +351,6 @@ server <- function(input, output){
   })
   
   #막대그래프 #모든 동을 다 표현하지는 못함. #상위 20개 
-  # (이부분 스케일응 밑으로 빼는건 어떨까? 오른쪽에 두지 말고 아래쪽으로 빼는건 어떨까?)
   output$bar_dong <- renderPlot({
     dong_top20 <- data_final_M %>%
       group_by(DONG_NM) %>%
@@ -363,15 +359,58 @@ server <- function(input, output){
     ggplot(dong_top20, aes(x = reorder(DONG_NM, -Total), y = Total, fill = Total)) +
       geom_bar(stat = "identity") +
       scale_fill_gradient(low = "#aec6cf", high = "#A2866A") +
-      theme(axis.text.x = element_text(angle = 90, hjust = 1)) +
+      theme(axis.text.x = element_text(angle = 90, hjust = 1)) + # 이 부분을 추가하였습니다.
       labs(x = "Dong", y = input$indicator_dong)
   })
+  
+  
+  output$correlation_plot <- renderPlot({
+    # 사용자가 선택한 변수 이름 가져오기
+    selected_indicator <- input$indicator_dong
+    
+    # 해당 변수가 숫자형인지 확인
+    if(is.numeric(data_final_M[[selected_indicator]])){
+      # 'CLS_MK_NUM'과 선택한 변수 간의 산점도
+      p <- ggplot(data_final_M, aes_string(x = selected_indicator, y = "CLS_MK_NUM")) +
+        geom_point() +
+        geom_smooth(method = "lm", col = "red") + # 선형회귀선 추가
+        labs(x = selected_indicator, y = "Closure Rate",
+             title = paste("Scatterplot of", selected_indicator, "and Closure Rate"))
+      print(p)
+    } else {
+      print("The selected indicator or the closure rate is not numeric. Please select another indicator.")
+    }
+  })
+  
+
+  
+  output$correlation_plot02 <- renderPlot({
+    
+    data_numeric <- data_final_M[, c("MK_NUM", "SMK_NUM", "OP_MK_NUM", "CLS_MK_NUM", 
+                                     "FRC_MK_NUM", "OP_RATE", "CLS_RATE", "DT", 
+                                     "IN", "OUT", "PARKING")]
+    
+    # 컬럼명 한국어로
+    colnames(data_numeric) <- c("점포수", "유사업종점포수", "개업점포수", "폐업점포수", 
+                                "프랜차이즈 점포수", "개업률", "폐업률", "인구밀도", 
+                                "유동인구 유입량", "유동인구 유출량", "주차장 수")
+    
+    # 상관관계 행렬 계산
+    cor_matrix <- cor(data_numeric, use="pairwise.complete.obs")
+    
+    # 상관관계 플롯
+    corrplot(cor_matrix, method = "circle")
+  })
+  
+  
+  
   
   # 테이블 (전체 동에 대한 테이블)
   output$table_dong <- DT::renderDataTable({
     datatable(
       data_final_M %>%
-        dplyr::select(SIGUNGU_NM, DONG_NM, all_of(input$indicator_dong)) %>%
+        dplyr::select(SIGUNGU_NM, DONG_NM, all_of(input$indicator_dong),CLS_RATE) %>% ###CLS_RATE
+        mutate(CLS_RATE = round(CLS_RATE, 4)) %>%
         arrange(-get(input$indicator_dong)), 
       options = list(
         columnDefs = list(
@@ -405,21 +444,7 @@ server <- function(input, output){
   
   cluseter_data_re <- cluseter_data_re 
   
-  # # 클러스터 중심비율 계산
-  # normalize_cluster_centers <- function(cluster_centers) {
-  #   max_values <- apply(cluster_centers, 2, max)
-  #   max_values[max_values == 0] <- 1
-  #   normalized_centers <- sweep(cluster_centers, 2, max_values, "/")
-  #   normalized_centers[normalized_centers < 0] <- 0
-  #   return(normalized_centers)
-  # }
-  # 
-  # # 클러스터 중심의 모든 값이 0인 열 제거
-  # cluster_centers <- cluster_centers[, apply(cluster_centers, 2, function(x) !all(x == 0))]
-  # 
-  # # NA 값을 0으로 변경
-  # cluster_centers[is.na(cluster_centers)] <- 0
-  # 
+  
   
   # 클러스터1
   test_data_cluster1 <- reactive({ cluseter_data_re()[cluseter_data_re()$클러스터 == 1,] })
@@ -433,6 +458,7 @@ server <- function(input, output){
       )
     )
   })
+  
   output$map_cluster1 <- renderPlot({ })
   output$desc_cluster1 <- renderText({ 
     "클러스터 1: 상업적으로 활발하지만 주차 시설과 거주 인구가 상대적으로 부족한 지역
@@ -456,7 +482,7 @@ server <- function(input, output){
   # output$pct_chart_cluster1 <- renderPlot({
   #   draw_pie_chart(1)
   # })
-
+  
   
   
   # 클러스터2
@@ -527,7 +553,7 @@ server <- function(input, output){
   이런 지역은 주거 지역과 상업 지역이 잘 혼합된 지역일 수 있다.  요식업 폐업률이 거주 인구와 주차 시설에 크게 영향을 받을 수 있다."
   })
   
-
+  
   # 컬러 팔레트 설정
   #pastel_palette <- c("#B3CCE6", "#B8A1CF", "#BD7BBA", "#C353A5", "#C72C90", "#CC006C", "#D21E47", "#D63C23", "#DB5900", "#E07700", "#E59500", "#EAB200", "#EFD000", "#F4EE00", "#F9DB00", "#FEC900", "#FEB600", "#FFA300", "#FF9000", "#FF7D00")
   
@@ -712,7 +738,7 @@ server <- function(input, output){
               options = list(pageLength = 10, columnDefs = list(list(targets = "_all", className = "dt-center"))))
   })
   
-
+  
 }
 
 
