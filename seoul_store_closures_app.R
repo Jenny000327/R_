@@ -45,13 +45,13 @@ ui <- dashboardPage(
   #사이드 메뉴 부분
   dashboardSidebar(
     sidebarMenu(
-      menuItem("Home", tabName = "home", icon = icon("home")),
-      menuItem("EDA", tabName = "EDA", icon = icon("bar-chart")),  # 새로운 메뉴 추가
-      menuItem("현황 지도로 보기", tabName = "map", icon = icon("globe")),
-      menuItem("Total Indicator by Gu", tabName = "gu", icon = icon("chart-bar")), #이거 이름이 바껴서안된거였음.
-      menuItem("Total Indicator by Dong", tabName = "dong", icon = icon("chart-bar")),
-      menuItem("Clustering", tabName = "clustering", icon = icon("sitemap")), #아이콘 이상하면 다른거 추천해죠 (https://fontawesome.com/v5/search)
-      menuItem("Predict 폐업률", tabName = "predict", icon = icon("line-chart"))
+      menuItem("Welcome Page", tabName = "home", icon = icon("home")),
+      menuItem("Data Insights", tabName = "EDA", icon = icon("bar-chart")),  # 새로운 메뉴 추가
+      menuItem("Status Map", tabName = "map", icon = icon("globe")),
+      menuItem("Overview by District", tabName = "gu", icon = icon("chart-bar")), #이거 이름이 바껴서안된거였음.
+      menuItem("Detailed Overview by Neighborhood", tabName = "dong", icon = icon("chart-bar")),
+      menuItem("Area Group Analysis", tabName = "clustering", icon = icon("sitemap")), #아이콘 이상하면 다른거 추천해죠 (https://fontawesome.com/v5/search)
+      menuItem("Closure Rate Predictions", tabName = "predict", icon = icon("line-chart"))
     )
   ),
   
@@ -62,56 +62,24 @@ ui <- dashboardPage(
     #getwd()
     
     tabItems(
-      #Home 메뉴 (이 프로젝트에 대한 소개 더 추가! 사진도 넣구 글도 추가해주고 이 페이지가 처음 보이게 되는 페이지.)
-        #Home 메뉴
+      
       tabItem(tabName = "home",
-              h2("서울시 동별 폐업률 분석"),
               fluidRow(
-                box(title = "경기 하락 지표", class = "custom-box",style = "height: 300px;", width = 4, "경기 하락 지표 그래프"),
-                box(
-                  title = "프로젝트의 도움",class = "borderless-box",
-                  status = "primary", solidHeader = TRUE,
-                  width = 8, 
-                  collapsible = TRUE, 
-                  collapsed = FALSE,
-                  tags$div(
-                    tags$span(tags$i(class = "fa-sharp fa-solid fa-users fa-lg fa-2x"),style = "margin-right: 10px;"),h3("사회적 가치 창출")),
-                    p("본 분석을 통해 어느 지역, 어느 산업이 가장 큰 폐업 위험에 노출되어 있는지 파악이 가능합니다. 이를 통해 정부 및 관련 기관은 조기 대응이 가능하며, 더 나아가 사회적 경제적 손실을 최소화 할 수 있습니다."),
-                    tags$span(tags$i(class = "fa-regular fa-face-smile fa-2x"),style = "margin-right: 10px;",h3("폐업 예방 및 사업 성공")),
-                    p("창업자나 사업가들은 본 분석을 참고하여 사업 위치와 종류를 결정할 때 도움을 받을 수 있습니다. 이를 통해 더 안정적이고 성공 가능성이 높은 사업을 설립할 수 있습니다.")
-                  )
-                ),
-              fluidRow(
-                box(
-                  title = "요식업 폐업률 분석에 집중 한 이유", class = "borderless-box",
-                  status = "primary", solidHeader = TRUE,
-                  width = 8, 
-                  collapsible = TRUE, 
-                  collapsed = FALSE,
-                  tagList(
-                    tags$div(
-                      tags$span(tags$i(class = "fa fa-utensils fa-2x"), " ",h3("요식업의 중요성")),  # size increased
-                      p("요식업은 서울시내에서 가장 활발한 업종 중 하나로, 많은 고용을 창출하고 있습니다. 또한 소비자의 삶의 질을 향상시키는 중요한 역할을 합니다."),
-                      tags$span(tags$i(class = "fa fa-exclamation-triangle fa-2x"), " ",h3("요식업의 변동성")),  # size increased
-                      p("그러나 경제적 변동성에 따라 요식업은 쉽게 피해를 입을 수 있으며, 이로 인해 많은 폐업이 발생하곤 합니다. 이러한 이유로 요식업의 폐업률 분석은 중요한 의미를 가집니다.")
-                    )
-                  )
-                ),
-                box(title = "업종별 폐업률 그래프", class = "custom-box",style = "height: 300px;", width = 4, plotOutput("cm_cls"))
-              ),
-              fluidRow(
-                box(title = "추천 사용자", class = "custom-box",style = "height: 200px;", width = 12,
-                    tagList(
-                      h3("세호"),
-                      p("세호는 창업을 고려 중인 젊은 사람입니다. 어떤 위치에서 어떤 종류의 사업을 시작할지 결정하기 위해 이 분석을 참조하려고 합니다."),
-                      h3("재희"),
-                      p("재희는 지역 경제 개발 담당 공무원입니다. 그녀는 어떤 지역과 업종이 가장 많은 도움을 필요로 하는지 파악하기 위해 이 분석을 활용하려고 합니다.")
-                    )
-                ),
-                box(title = "contact", class = "custom-box",style = "height: 200px;",width = 12, "우리 프로필 및 역할 분담 내용")
+                box(title = "Welcome", class = "home-box",
+                    tabsetPanel(id = "mig_tab",
+                                tabPanel("Total", imageOutput("img1")),
+                                tabPanel("Open", imageOutput("img2")),
+                                tabPanel("Closed", imageOutput("img3")),
+                                tabPanel("Total", imageOutput("img4")),
+                                tabPanel("Open", imageOutput("img5")),
+                                tabPanel("Closed", imageOutput("img6")),
+                                tabPanel("Closed", imageOutput("img7"))
+                    ),
+                    height =  800,
+                    width = 10
+                )
               )
       ),
-      
       
       
       #EDA 메뉴
@@ -282,14 +250,42 @@ ui <- dashboardPage(
 #서버 부분
 server <- function(input, output){
   
+  output$img1 <- renderImage({
+    list(src = "www/Home_black-1.png", contentType = "image/png", alt = "Total Store Count", width = "1000px", height = "600px")
+  }, deleteFile = FALSE)
+
+  output$img2 <- renderImage({
+    list(src = "www/Home_black-2.png", contentType = "image/png", alt = "Open Store Count", width = "1000px", height = "600px")
+  }, deleteFile = FALSE)
+
+  output$img3 <- renderImage({
+    list(src = "www/Home_black-3.png", contentType = "image/png", alt = "Closed Store Count", width = "1000px", height = "600px")
+  }, deleteFile = FALSE)
+  output$img4 <- renderImage({
+    list(src = "www/Home_black-4.png", contentType = "image/png", alt = "Total Store Count", width = "1000px", height = "600px")
+  }, deleteFile = FALSE)
+
+  output$img5 <- renderImage({
+    list(src = "www/Home_black-5.png", contentType = "image/png", alt = "Open Store Count", width = "1000px", height = "600px")
+  }, deleteFile = FALSE)
+
+  output$img6 <- renderImage({
+    list(src = "www/Home_black-6.png", contentType = "image/png", alt = "Closed Store Count", width = "1000px", height = "600px")
+  }, deleteFile = FALSE)
+  output$img7 <- renderImage({
+    list(src = "www/Home_black-7.png", contentType = "image/png", alt = "Closed Store Count", width = "1000px", height = "600px")
+  }, deleteFile = FALSE)
+  
+  
   
 #------------EDA 메뉴  
+  library(ggplot2)
   
   # Open rates distribution
   output$open_rate_distribution <- renderPlot({
     # 개업률 분포 그리기
     ggplot(data_final_M, aes(x=OP_RATE)) +
-      geom_histogram(bins=30, fill='#aec6cf', color='black') +
+      geom_histogram(bins=30, fill='#A2866A') +
       labs(x='개업률', y='Count', title='개업률 분포') +
       theme_minimal()
   })
@@ -298,7 +294,7 @@ server <- function(input, output){
   output$closed_rate_distribution <- renderPlot({
     # 폐업률 분포 그리기
     ggplot(data_final_M, aes(x=CLS_RATE)) +
-      geom_histogram(bins=30, fill='#aec6cf', color='black') +
+      geom_histogram(bins=30, fill='#A8AAA3') +
       labs(x='폐업률', y='Count', title='폐업률 분포') +
       theme_minimal()
   })
