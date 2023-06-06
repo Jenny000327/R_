@@ -45,7 +45,7 @@ str(cd_data1)
 data_join <- left_join(map_data, cd_data1, by = c('DONG_NM' = 'DONG_NM'))
 str(data_join)
 
-## map fill data
+
 ## hmap_final은 hmap 파일에 행정동을 기준으로 행정동별 수, 유동인구의 합계를 각각의 열로 병합한것
 hmap <- read.csv('C:/data/preprocessed/emd_mapdata.csv') %>% as_tibble() %>%
 
