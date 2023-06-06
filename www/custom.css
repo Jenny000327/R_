@@ -49,6 +49,7 @@ body {
 .custom-box {
   box-shadow: 0px 0px 15px rgba(0, 0, 0, 0.3);
 }
+
 /* Active tab background color */
 .nav .custom-tab.active, .nav .custom-tab.active:hover {
     background-color: #fdfd96; /* Pastel yellow */
@@ -59,4 +60,19 @@ body {
 .nav .custom-tab, .nav .custom-tab:hover {
     background-color: #f0f0f0; /* Light gray */
     color: black;
+}
+.box.box-solid.box-primary > .box-header {
+    background-color: #A2866A;
+    color: #fff;
+}
+
+.borderless-box .box {
+    border: none;
+}
+
+
+.home-box {
+  box-shadow: 0px 0px 15px rgba(0, 0, 0, 0.3);
+  background-color: rgba(254, 249, 245, 0.8);
+
 }
