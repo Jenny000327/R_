@@ -40,27 +40,29 @@ head(map_data)
 cd_data <-read.csv("C:/data/preprocessed/dong_cd.csv", header=TRUE, fileEncoding = "CP949", encoding = "UTF-8")
 cd_data1 <- subset(cd_data, select=-abb)
 head(cd_data1)
-cd_data1$DONG_CD <- as.numeric(cd_data1$DONG_CD)
+cd_data1$DONG_CD<- as.character(cd_data1$DONG_CD)
 str(cd_data1)
+
 #join
-left_join(map_data, cd_data1, by='DONG_NM')
+data_join <- left_join(map_data, cd_data1, by = c('DONG_NM' = 'DONG_NM'))
+str(data_join)
 
 ## map fill data
 ## hmap_final은 hmap 파일에 행정동을 기준으로 행정동별 수, 유동인구의 합계를 각각의 열로 병합한것
 hmap <- read.csv('C:/data/preprocessed/emd_mapdata.csv') %>% as_tibble() %>%
-  
-  hmap_cluster <- read.csv('C:/data/preprocessed/cluster.csv') 
+
+hmap_cluster <- read.csv('C:/data/preprocessed/cluster.csv') 
 head(hmap_cluster)
 hmap_testdata <- read.csv('C:/data/preprocessed/test_data.csv')
 head(hmap_testdata)
 
 ### 클러스터링 시각화
-ggplot() + geom_polygon(data = hmap_cluster, aes(x = long, y = lat, group = group, fill = old),
+ggplot() + geom_polygon(data = hmap_cluster, aes(x = long, y = lat, group = group, fill = ...),
                         color = 'gray') + scale_fill_gradient(low = "#FFCCFF", high = "#6600CC", 
                                                               space = "Lab", guide = "colourbar") + ggtitle('클러스터링')
 ##테스트데이터 시각화
-ggplot() + geom_polygon(data = hmap_testdata, aes(x = long, y = lat, group = group, fill = pop_sum),
+ggplot() + geom_polygon(data = hmap_testdata, aes(x = long, y = lat, group = group, fill = ...),
                         color = 'gray') + scale_fill_gradient(low = "#FFCCFF", high = "#6600CC", 
                                                               space = "Lab", guide = "colourbar") + ggtitle('test data')
-##
+
 
