@@ -1,12 +1,10 @@
 library(ggplot2)
-#install.packages('data.table')
 library(data.table)
 library(dplyr)
 library(ggmap)
 library(rgeos)
 library(maptools)
 library(rgdal)
-#install.packages('IRdisplay')
 library(IRdisplay)
 
 # 매핑용 행정동 코드 데이터 로드
