@@ -21,6 +21,7 @@ train_data <- read_csv("C:/data/preprocessed/train_data.csv") %>% as_tibble()
 eval_results_df <- read_csv("C:/data/preprocessed/eval_results_df.csv")
 cluster_data <- read_csv("C:/data/preprocessed/cluster.csv")
 cluster_centers <- read_csv("C:/data/preprocessed/cluster_centers.csv")
+rf1_importance <- read_csv("C:/data/preprocessed/rf1_importance.csv")
 
 # # data_final_M 데이터._가영
 #setwd("C:/")
@@ -35,6 +36,28 @@ cluster_centers <- read_csv("C:/data/preprocessed/cluster_centers.csv")
 
 #str(eval_results_df)
 #View(eval_results_df)
+# 변수명을 한국어로 변경
+rf1_importance <- mutate(rf1_importance,
+                         ...1 = case_when(
+                           ...1 == "MK_NUM" ~ "점포수",
+                           ...1 == "SMK_NUM" ~ "유사업종점포수",
+                           ...1 == "OP_MK_NUM" ~ "개업점포수",
+                           ...1 == "FRC_MK_NUM" ~ "프랜차이즈점포수",
+                           ...1 == "OP_RATE" ~ "개업률",
+                           ...1 == "DT" ~ "인구밀도",
+                           ...1 == "IN" ~ "유동인구유입량",
+                           ...1 == "OUT" ~ "유동인구유출량",
+                           ...1 == "PARKING" ~ "주차장수",
+                           ...1 == "cluster" ~ "클러스터",
+                           TRUE ~ ...1
+                         )
+)
+
+# 컬럼명 변경
+names(rf1_importance) <- c("Variable", "Importance")
+
+str(rf1_importance)
+rf1_importance
 
 #사용자 Ui 부분
 ui <- dashboardPage(
@@ -46,10 +69,10 @@ ui <- dashboardPage(
   dashboardSidebar(
     sidebarMenu(
       menuItem("Welcome Page", tabName = "home", icon = icon("home")),
-      menuItem("Data Insights", tabName = "EDA", icon = icon("bar-chart")),  # 새로운 메뉴 추가
+      menuItem("Data Insights", tabName = "EDA", icon = icon("bar-chart")), 
       menuItem("Status Map", tabName = "map", icon = icon("globe")),
-      menuItem("Overview by District", tabName = "gu", icon = icon("chart-bar")), #이거 이름이 바껴서안된거였음.
-      menuItem("Detailed Overview by Neighborhood", tabName = "dong", icon = icon("chart-bar")),
+      menuItem("Overview by District", tabName = "gu", icon = icon("chart-bar")), 
+      menuItem("Neighborhood Details", tabName = "dong", icon = icon("chart-bar")),
       menuItem("Area Group Analysis", tabName = "clustering", icon = icon("sitemap")), #아이콘 이상하면 다른거 추천해죠 (https://fontawesome.com/v5/search)
       menuItem("Closure Rate Predictions", tabName = "predict", icon = icon("line-chart"))
     )
@@ -59,33 +82,27 @@ ui <- dashboardPage(
   dashboardBody(
     includeCSS("www/custom.css"),
     #includeCSS("Git_R/R_/www/custom.css"),
-    #getwd()
     
     tabItems(
       
+      #Welcome Page 메뉴
       tabItem(tabName = "home",
               fluidRow(
-                box(title = "Welcome", class = "home-box",
-                    tabsetPanel(id = "mig_tab",
-                                tabPanel("Total", imageOutput("img1")),
-                                tabPanel("Open", imageOutput("img2")),
-                                tabPanel("Closed", imageOutput("img3")),
-                                tabPanel("Total", imageOutput("img4")),
-                                tabPanel("Open", imageOutput("img5")),
-                                tabPanel("Closed", imageOutput("img6")),
-                                tabPanel("Closed", imageOutput("img7"))
-                    ),
-                    height =  800,
-                    width = 10
+                box(title = "서울시 행정 동별 폐업률 예측", class = "home-box",imageOutput("img1"),width = 11, height = 800),
+                box(title = "사회적 가치", class = "home-box",imageOutput("img2"),width = 11, height = 800),
+                box(title = "요식업 폐업률 분석", class = "home-box",imageOutput("img3"),width = 11, height = 800),
+                box(title = "페르소나", class = "home-box",imageOutput("img4"),width = 11, height = 800),
+                box(title = "앱 소개", class = "home-box",imageOutput("img5"),width = 11, height = 800),
+                box(title = "요약", class = "home-box",imageOutput("img7"),width = 11, height = 800),
+                box(title = "제작자 소개", class = "home-box",imageOutput("img6"),width = 11, height = 800)
                 )
-              )
       ),
       
       
-      #EDA 메뉴
+      #Data Insights 메뉴
       tabItem(tabName = "EDA",
               tabsetPanel(
-                tabPanel("Distribution of Opening and Closing Rates", 
+                tabPanel("Rate Distribution", 
                          fluidRow(
                            box(title = "Open Rate Distribution", class = "custom-box", plotOutput("open_rate_distribution"), width = 6),
                            box(title = "Close Rate Distribution", class = "custom-box", plotOutput("closed_rate_distribution"), width = 6)
@@ -93,7 +110,7 @@ ui <- dashboardPage(
                          fluidRow(
                            box(title = "Table", class = "custom-box", DTOutput("table_rates"), width = 12)
                          )),
-                tabPanel("Correlation",
+                tabPanel("Correlation Analysis",
                          fluidRow(
                            box(title = "Correlation Scatterplot", class = "custom-box",style = "height: 500px;", selectInput("indicator_dong", "Choose an indicator", choices = c("점포수" = "MK_NUM", "유사업종점포수" = "SMK_NUM", "개업점포수" = "OP_MK_NUM",
                                                                                                                                                                                          "폐업점포수" = "CLS_MK_NUM", "프랜차이즈 점포수" = "FRC_MK_NUM",
@@ -104,11 +121,11 @@ ui <- dashboardPage(
               )),
       
       
-      # 현황 지도로 보기 메뉴
-      # 현황 지도로 보기 메뉴
-      tabItem(tabName = "map", # 이 메뉴 이름은 map
+
+      # Status Map 메뉴
+      tabItem(tabName = "map", 
               fluidRow(
-                box(title = "Map", class = "custom-box",  #첫번째 박스에 지도 사진을 넣는데
+                box(title = "Store Map", class = "custom-box",  #첫번째 박스에 지도 사진을 넣는데
                     tabsetPanel(id = "map_tab", # 그 안에 tabsetpanel을 넣어서 각각 눌러서 볼 수 있도록함.
                                 tabPanel("Total", imageOutput("mk_img")),
                                 tabPanel("Open", imageOutput("op_img")),
@@ -122,92 +139,94 @@ ui <- dashboardPage(
       ),
     
       
-      #정보를 구 단위로 시각화
+      #Overview by District 메뉴 [자치구 단위 시각화]
       tabItem(tabName = "gu",
               fluidRow(
                 # Indicators box [이 박스 안에는 정보(요인들) SelectInput기능과  "구" 별 tree map이 들어있다.]
-                box(title = "Indicators",class = "custom-box", selectInput("indicator_gu", "Choose an indicator",
+                box(title = "District Indicators",class = "custom-box", selectInput("indicator_gu", "원하시는 정보를 선택하세요.",
                                                                            choices = c("점포수" = "MK_NUM", "유사업종점포수" = "SMK_NUM", "개업점포수" = "OP_MK_NUM",
                                                                                        "폐업점포수" = "CLS_MK_NUM", "프랜차이즈 점포수" = "FRC_MK_NUM",
                                                                                        "인구밀도" = "DT", "유동인구 유입량" = "IN",
                                                                                        "유동인구 유출량" = "OUT", "주차장 수" = "PARKING"))
                     , plotOutput("gu_treemap"), width = 6),
                 # GU 박스[구 selectInput기능과"구" 별 막대 그래프 가 들어있다.]
-                box(title = "Gu",class = "custom-box", selectInput("gu", "Choose a Gu", choices = unique(data_final_M$SIGUNGU_NM)), plotOutput("bar_gu"), width = 6)),
+                box(title = "District Bar Chart",class = "custom-box", selectInput("gu", "원하시는 자치 구를 선택하세요.", choices = unique(data_final_M$SIGUNGU_NM)), plotOutput("bar_gu"), width = 6)),
               fluidRow(
                 #구에 속한 동 태이블
-                box(title = "table",class = "custom-box", DTOutput("table_gu"), width = 12))),
+                box(title = "District Table",class = "custom-box", DTOutput("table_gu"), width = 12))),
       
       
-      #정보를 동단위로 시각화
+      
+      #Neighborhood Details 메뉴 [행정동 단위 시각화]
       tabItem(tabName = "dong",
               fluidRow(
-                box(title = "Indicators", class = "custom-box",  style = "height: 500px;", selectInput("indicator_dong02", "Choose an indicator", choices = c("점포수" = "MK_NUM", "유사업종점포수" = "SMK_NUM", "개업점포수" = "OP_MK_NUM",
+                box(title = "Neighborhood Indicators", class = "custom-box",  style = "height: 500px;", selectInput("indicator_dong02", "원하시는 정보를 선택하세요.", choices = c("점포수" = "MK_NUM", "유사업종점포수" = "SMK_NUM", "개업점포수" = "OP_MK_NUM",
                                                                                                                                                             "폐업점포수" = "CLS_MK_NUM", "프랜차이즈 점포수" = "FRC_MK_NUM",
                                                                                                                                                             "인구밀도" = "DT", "유동인구 유입량" = "IN",
                                                                                                                                                             "유동인구 유출량" = "OUT", "주차장 수" = "PARKING")), plotOutput("dong_treemap"),width = 6),
-                box(title = "bar", class = "custom-box", style = "height: 500px;", plotOutput("bar_dong"), width = 6)),
+                box(title = "Neighborhood Bar Chart", class = "custom-box", style = "height: 500px;", plotOutput("bar_dong"), width = 6)),
               fluidRow(
-                box(title = "table", class = "custom-box", DTOutput("table_dong"), width = 12 ))),
+                box(title = "Neighborhood Table", class = "custom-box", DTOutput("table_dong"), width = 12 ))),
       
       
-      # 클러스터링에 대한 메뉴
+      
+      # Area Group Analysis 메뉴[클러스터링]
       tabItem(tabName = "clustering",
               tabsetPanel(id = "clustering_tab",
                           
                           tabPanel("Cluster 1", class = "custom-tab",
                                    fluidRow(
-                                     box(title = "Description",class = "custom-box", verbatimTextOutput("desc_cluster1"), width = 12,
+                                     box(title = "Cluster Description",class = "custom-box", verbatimTextOutput("desc_cluster1"), width = 12,
                                        tagList(
                                        h3("Cluster 1: 점포 수는 적지만 주차장과 인구 밀도가 높은 도시 중심지역"),
                                        p(" 이 클러스터는 주차장 수가 많고, 인구 밀도와 유동인구가 매우 높지만, 상대적으로 점포 수가 적은 지역을 표현합니다. 
 이러한 특성은 큰 도시의 중심지역 또는 주거 밀집 지역일 가능성이 높습니다. 
 이 지역은 많은 사람들이 모이는 곳이지만, 점포 수가 상대적으로 적어 경쟁이 비교적 덜 치열할 수 있습니다.")
                                      )),
-                                     box(title = "map",class = "custom-box", plotOutput("map_cluster1"), width = 8),
-                                     box(title = "cluster_centers",class = "custom-box", plotOutput("centers1"), width = 4),
-                                     box(title = "Table", class = "custom-box",DTOutput("table_cluster1"), width = 12)
+                                     box(title = "Cluster1 Map",class = "custom-box", plotOutput("map_cluster1"), width = 8),
+                                     box(title = "Cluster Centers",class = "custom-box", plotOutput("centers1"), width = 4),
+                                     box(title = "Cluster Table", class = "custom-box",DTOutput("table_cluster1"), width = 12)
                                    )),
                           
                           tabPanel("Cluster 2",class = "custom-tab",
                                    fluidRow(
-                                     box(title = "Description",class = "custom-box", verbatimTextOutput("desc_cluster2"), width = 12,
+                                     box(title = "Cluster Description",class = "custom-box", verbatimTextOutput("desc_cluster2"), width = 12,
                                          tagList(
                                            h3("Cluster 2: 점포 수는 많지만 인구 밀도와 주차장은 적은 상업적인 도심 지역"),
                                            p(" 이 클러스터는 점포 수가 가장 많지만, 인구 밀도와 유동인구, 주차장 수가 상대적으로 적은 지역을 나타냅니다.
 이는 상업 지역이나 상가가 집중되어 있는 도심의 한 지역일 가능성이 있습니다.
 비록 사람들의 유동이 덜하지만, 다양한 종류의 점포가 많이 위치해 있을 것으로 추측됩니다.")
                                          )),
-                                     box(title = "map",class = "custom-box", plotOutput("map_cluster2"), width = 8),
-                                     box(title = "cluster_centers",class = "custom-box", plotOutput("centers2"), width = 4),
-                                     box(title = "Table", class = "custom-box",DTOutput("table_cluster2"), width = 12)
+                                     box(title = "Cluster2 Map",class = "custom-box", plotOutput("map_cluster2"), width = 8),
+                                     box(title = "Cluster Centers",class = "custom-box", plotOutput("centers2"), width = 4),
+                                     box(title = "Cluster Table", class = "custom-box",DTOutput("table_cluster2"), width = 12)
                                    )),
                           
                           tabPanel("Cluster 3",class = "custom-tab",
                                    fluidRow(
-                                     box(title = "Description",class = "custom-box", verbatimTextOutput("desc_cluster3"), width = 12,
+                                     box(title = "Cluster Description",class = "custom-box", verbatimTextOutput("desc_cluster3"), width = 12,
                                          tagList(
                                            h3("Cluster 3: 점포 수와 인구 밀도, 주차장이 모두 중간 정도인 도시 외곽 또는 주거 지역"),
                                            p("  이 클러스터는 점포 수가 중간 정도에 위치하며, 인구 밀도와 유동인구가 상대적으로 높은 지역을 표현합니다.
                                               이는 도시의 외곽 지역이나 주거 지역일 수 있으며, 상당히 높은 인구 밀도와 유동인구를 보유하고 있어 점포들에게 고객 유치에 유리할 수 있습니다.")
                                          )),
-                                     box(title = "map",class = "custom-box", plotOutput("map_cluster3"), width = 8),
-                                     box(title = "cluster_centers",class = "custom-box", plotOutput("centers3"), width = 4),
-                                     box(title = "Table", class = "custom-box",DTOutput("table_cluster3"), width = 12)
+                                     box(title = "Cluster3 Map",class = "custom-box", plotOutput("map_cluster3"), width = 8),
+                                     box(title = "Cluster Centers",class = "custom-box", plotOutput("centers3"), width = 4),
+                                     box(title = "Cluster Table", class = "custom-box",DTOutput("table_cluster3"), width = 12)
                                    )),
                           
                           tabPanel("Cluster 4",class = "custom-tab",
                                    fluidRow(
-                                     box(title = "Description",class = "custom-box", verbatimTextOutput("desc_cluster4"), width = 12,
+                                     box(title = "Cluster Description",class = "custom-box", verbatimTextOutput("desc_cluster4"), width = 12,
                                          tagList(
                                            h3("Cluster 4: 점포 수는 적지만 인구 밀도와 주차장은 높은 주거 지역 또는 도심 주변 지역"),
                                            p(" 이 클러스터는 인구 밀도와 유동인구, 주차장 수가 비교적 높은 반면, 점포 수는 상대적으로 적은 지역을 나타냅니다.
 이는 발전된 주거 지역이나 상업적 활동이 상대적으로 덜한 도심 주변의 지역일 가능성이 있습니다.
 이러한 지역은 점포 수 대비 인구 밀도와 유동인구가 높아, 새로운 점포에게 큰 기회를 제공할 수 있습니다.")
                                          )),
-                                     box(title = "map",class = "custom-box", plotOutput("map_cluster4"), width = 8),
-                                     box(title = "cluster_centers",class = "custom-box", plotOutput("centers4"), width = 4),
-                                     box(title = "Table", class = "custom-box",DTOutput("table_cluster4"), width = 12)
+                                     box(title = "Cluster4 Map",class = "custom-box", plotOutput("map_cluster4"), width = 8),
+                                     box(title = "Cluster Centers",class = "custom-box", plotOutput("centers4"), width = 4),
+                                     box(title = "Cluster Table", class = "custom-box",DTOutput("table_cluster4"), width = 12)
                                    ))
               )
       ),
@@ -215,30 +234,34 @@ ui <- dashboardPage(
       
   
       
-      # Predict 폐업률 메뉴
+      # Closure Rate Predictions 메뉴 [예측 결과]
       tabItem(tabName = "predict",
               tabsetPanel(id = "predict_tab",
-                          tabPanel("RF 산점도 그래프",class = "custom-tab",
+                          tabPanel("Random Forest Plot",class = "custom-tab",
                                    fluidRow(
                                      box(title = "Actual vs Predicted",class = "custom-box", plotOutput("rf_plot"), width = 12)
                                    )),
-                          tabPanel("RG 산점도 그래프",class = "custom-tab",
+                          tabPanel("Linear Regression Plot",class = "custom-tab",
                                    fluidRow(
                                      box(title = "Actual vs Predicted",class = "custom-box", plotOutput("reg_plot"), width = 12)
                                    )),
-                          tabPanel("예측 성능 평가 지표",class = "custom-tab",
+                          tabPanel("Evaluation Metrics",class = "custom-tab",
                                    fluidRow(
                                      box(title = "Evaluation MEtrics for Each Model", class = "custom-box",plotOutput("Evaluation"), width = 12)
                                    )),
-                          tabPanel("폐업률 예측 비교",class = "custom-tab",
+                          tabPanel("Closure Rate Comparison",class = "custom-tab",
                                    fluidRow(
                                      box(title = "Actual", plotOutput("Actual_map"),class = "custom-box", width = 6),
                                      box(title = "Predicted", plotOutput("Predicted_map"), class = "custom-box",width = 6)
                                    ),
                                    fluidRow(
                                      box(title = "Table", class = "custom-box",DTOutput("Actual_Predicted_tabl"), width = 12)
-                                   )
-                          )
+                                   )),
+                          tabPanel("rf1 Variable Importance", class = "custom-tab",
+                                   fluidRow(
+                                     box(title = "Barplot of Variable Importance", class = "custom-box", plotOutput("rf1_varimp_bar"), width = 6),
+                                     box(title = "Piechart of Variable Importance", class = "custom-box", plotOutput("rf1_varimp_pie"), width = 6)
+                                   ))
               )
       )
     )
@@ -250,35 +273,42 @@ ui <- dashboardPage(
 #서버 부분
 server <- function(input, output){
   
+ 
+  
+#-----------Welcome Page 
+  
+  
+  
   output$img1 <- renderImage({
-    list(src = "www/Home_black-1.png", contentType = "image/png", alt = "Total Store Count", width = "1000px", height = "600px")
+    list(src = "www/Home_black-1.png", contentType = "image/png", alt = "Total Store Count", width = "100%", height = 700)
   }, deleteFile = FALSE)
-
+  
   output$img2 <- renderImage({
-    list(src = "www/Home_black-2.png", contentType = "image/png", alt = "Open Store Count", width = "1000px", height = "600px")
+    list(src = "www/Home_black-2.png", contentType = "image/png", alt = "Open Store Count", width = "100%", height = 700)
   }, deleteFile = FALSE)
-
+  
   output$img3 <- renderImage({
-    list(src = "www/Home_black-3.png", contentType = "image/png", alt = "Closed Store Count", width = "1000px", height = "600px")
+    list(src = "www/Home_black-3.png", contentType = "image/png", alt = "Closed Store Count", width = "100%", height = 700)
   }, deleteFile = FALSE)
   output$img4 <- renderImage({
-    list(src = "www/Home_black-4.png", contentType = "image/png", alt = "Total Store Count", width = "1000px", height = "600px")
+    list(src = "www/Home_black-4.png", contentType = "image/png", alt = "Total Store Count", width = "100%", height = 700)
   }, deleteFile = FALSE)
-
+  
   output$img5 <- renderImage({
-    list(src = "www/Home_black-5.png", contentType = "image/png", alt = "Open Store Count", width = "1000px", height = "600px")
+    list(src = "www/Home_black-5.png", contentType = "image/png", alt = "Open Store Count", width = "100%", height = 700)
   }, deleteFile = FALSE)
-
+  
   output$img6 <- renderImage({
-    list(src = "www/Home_black-6.png", contentType = "image/png", alt = "Closed Store Count", width = "1000px", height = "600px")
+    list(src = "www/Home_black-6.png", contentType = "image/png", alt = "Closed Store Count", width = "100%", height = 700)
   }, deleteFile = FALSE)
   output$img7 <- renderImage({
-    list(src = "www/Home_black-7.png", contentType = "image/png", alt = "Closed Store Count", width = "1000px", height = "600px")
+    list(src = "www/Home_black-7.png", contentType = "image/png", alt = "Closed Store Count", width = "100%", height = 700)
   }, deleteFile = FALSE)
   
   
   
-#------------EDA 메뉴  
+#------------Data Insights
+  
   library(ggplot2)
   
   # Open rates distribution
@@ -303,7 +333,8 @@ server <- function(input, output){
   output$table_rates <- renderDT({
     # 개업률과 폐업률을 포함한 데이터프레임 생성
     rates_data <- data_final_M %>%
-      select(SIGUNGU_NM, DONG_NM, OP_RATE, CLS_RATE)
+      select(SIGUNGU_NM, DONG_NM, OP_RATE, CLS_RATE)%>%
+      mutate(CLS_RATE = round(CLS_RATE, 4))
     
     datatable(rates_data, options = list(pageLength = 10))
   })
@@ -350,7 +381,9 @@ server <- function(input, output){
   
   
   
-#------------현황 지도로 보기 메뉴
+  
+  
+#------------Status Map
   
   # Image rendering
   #지도 표현 메뉴 부분, 지도 이미지.
@@ -407,6 +440,10 @@ server <- function(input, output){
   
   
 
+
+  
+#------------Overview by District
+  
   #indicator 정보들을 테이블에서 한글로 표현하려고.
   indicator_dict <- c("점포수" = "MK_NUM", "유사업종점포수" = "SMK_NUM", "개업점포수" = "OP_MK_NUM",
                       "폐업점포수" = "CLS_MK_NUM", "프랜차이즈 점포수" = "FRC_MK_NUM",
@@ -415,8 +452,6 @@ server <- function(input, output){
   
   indicator_dict <- setNames(names(indicator_dict), indicator_dict)
   
-  
-#------------자치구에 대한 메뉴  
   
   #GU related rendering 구와 관련된 코드들(트리맵, 막대그래프, 테이블)
   output$gu_treemap <- renderPlot({
@@ -470,7 +505,7 @@ server <- function(input, output){
   
   
 
-#------------동에 대한 정보 있는 메뉴
+#------------Neighborhood Details
   
   # DONG related rendering 동과 관련된 코드들 (트리맵, 막대그래프, 테이블)
   output$dong_treemap <- renderPlot({
@@ -524,7 +559,7 @@ server <- function(input, output){
   
   
   
-#------------클러스터링 메뉴
+#------------Area Group Analysis
   
   # 컬럼 이름 변경 및 필요한 컬럼만 선택
   # 데이터를 읽고, 클러스터를 만들고, 변형.
@@ -569,7 +604,6 @@ server <- function(input, output){
   
 
  
-  
   
   # 클러스터1
   
@@ -692,12 +726,8 @@ server <- function(input, output){
   
   
   
-#------------예측 결과 메뉴
-  
-  # 컬러 팔레트 설정
-  #pastel_palette <- c("#B3CCE6", "#B8A1CF", "#BD7BBA", "#C353A5", "#C72C90", "#CC006C", "#D21E47", "#D63C23", "#DB5900", "#E07700", "#E59500", "#EAB200", "#EFD000", "#F4EE00", "#F9DB00", "#FEC900", "#FEB600", "#FFA300", "#FF9000", "#FF7D00")
-  
-  
+#------------Closure Rate Predictions
+
   # 컬러 팔레트 설정
   pastel_palette <- c("#C353A5", "#A0522D","#8B4513","#BC8F8F", "red", "saddlebrown")
   
@@ -787,11 +817,8 @@ server <- function(input, output){
     grid.arrange(p_rg1, p_rg2, p_rg3, p_rg4, nrow = 2)
   })
   
-  # color_range <- colorRampPalette(c("#aec6cf", "#A2866A"))(8)
-  # 
-  # # 새로 생성한 팔레트
-  # print(color_range)
-  # 
+
+
   
 # 예측 성능 평가 지표
  pastel_palette02 <- c("#AEC6CF", "#ACBCC0", "#AAB3B2", "#A8AAA3", "#A7A195", "#A59886", "#A38F78", "#A2866A")
@@ -882,9 +909,62 @@ server <- function(input, output){
               options = list(pageLength = 10, columnDefs = list(list(targets = "_all", className = "dt-center"))))
   })
   
+
+  rf1_importance <- reactive({
+    data <- tibble(
+      Variable = c("점포수", "유사업종점포수", "개업점포수", "프랜차이즈점포수", 
+                   "개업률", "인구밀도", "유동인구유입량", "유동인구유출량", 
+                   "주차장수", "클러스터"),
+      Importance = c(0.00764, 0.00794, 0.00559, 0.00722, 0.02389, 
+                     0.00428, 0.00828, 0.00432, 0.00495, 0.00153)
+      #Angle = c(60, 80, 110, 130, 140, 30, 60, 80, 170, 0)  # 예시 각도, 실제로는 원하는 각도를 지정해주세요.
+    )
+    return(data)
+  })
+  
+  # Barplot of Variable Importance
+  output$rf1_varimp_bar <- renderPlot({
+    data <- rf1_importance()
+    ggplot(data, aes(x=reorder(Variable, Importance), y=Importance)) + 
+      geom_bar(stat="identity", fill="#A59886") + 
+      coord_flip() + 
+      theme_minimal() + 
+      xlab("중요도") + 
+      ylab("변수") +
+      ggtitle("변수 중요도 막대그래프")
+  })
+  
+  # color_range02 <- colorRampPalette(c("#aec6cf", "#A2866A"))(10)
+  # 
+  # # 새로 생성한 팔레트
+  # print(color_range02)
+  
+  color_range02 <- c("#B3C2D1", "#ACC1C6", "#A8BFBB", "#A5BDB0", "#A3BAA5", "#A1B79A", "#9EB590", "#9BB285", "#98AF7B", "#95AC70")
+  
+  
+  output$rf1_varimp_pie <- renderPlot({
+    data <- rf1_importance()
+    data$angle <- 90 - 360 * (cumsum(data$Importance) - 0.9 * data$Importance)
+    ggplot(data, aes(x="", y=Importance, fill=Variable)) +
+      geom_bar(width=1, stat="identity") +
+      coord_polar("y", start=0) +
+      scale_fill_manual(values = color_range02) + # Use manual color scale
+      theme_minimal() + 
+      xlab("") + 
+      ylab("") +
+      ggtitle("변수 중요도 원형차트") +
+      theme(legend.title = element_blank()) +
+      geom_text(aes(label = Variable, angle = angle), position = position_stack(vjust = 0.5), color = "black")
+  })
+  
+  
+  
+
+  
+
+  
   
 }
-
 
 
 #샤이니 앱 실행

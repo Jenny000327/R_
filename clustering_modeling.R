@@ -1,5 +1,3 @@
-
-#모델링 코드들 가영이가 한것대로 추가하구 정리만 했오!!
 # Libraries
 library(cluster)
 library(randomForest)
@@ -10,14 +8,15 @@ library(ggplot2)
 library(tidyr)
 library(tibble)
 
-setwd("C:/")
+
+#setwd("C:/")
 #setwd("Users/gayeongkim/Desktop/")
 
 
 # Load dataset
-df <- read_csv("data/preprocessed/data_final.csv") %>% as_tibble() # %>% select(-`...1`)
+df <- read_csv("C:/data/preprocessed/data_final.csv") %>% as_tibble() # %>% select(-`...1`)
 
-temp_df <- read_csv("data/preprocessed/data_final.csv") %>% as_tibble()
+temp_df <- read_csv("C:/data/preprocessed/data_final.csv") %>% as_tibble()
 print(colnames(temp_df))
 
 #클러스터링할 변수 선택 
@@ -183,13 +182,18 @@ ggplot(predictions_long, aes(x = CLS_RATE, y = prediction)) +
   geom_abline(slope = 1, intercept = 0, linetype = 2, color = "red") +
   labs(title = "Actual vs Predicted", x = "Actual", y = "Predicted")
 
+# Random Forest 변수 중요도
+rf1_importance <- importance(models$rf1)
+rf1_importance 
+# 또는 그래프로 표현하려면
+varImpPlot(models$rf1)
 
 
 eval_results_df
-write.csv(eval_results_df,"data/preprocessed/eval_results_df.csv")
-write.csv(test_data,"data/preprocessed/test_data.csv")
-write.csv(test_data,"data/preprocessed/train_data.csv")
-write.csv(df,"data/preprocessed/cluster.csv")
-write.csv(cluster_centers,"data/preprocessed/cluster_centers.csv")
-
+write.csv(eval_results_df,"C:/data/preprocessed/eval_results_df.csv")
+write.csv(test_data,"C:/data/preprocessed/test_data.csv")
+write.csv(test_data,"C:/data/preprocessed/train_data.csv")
+write.csv(df,"C:/data/preprocessed/cluster.csv")
+write.csv(cluster_centers,"C:/data/preprocessed/cluster_centers.csv")
+write.csv(rf1_importance,"C:/data/preprocessed/rf1_importance.csv")
 
