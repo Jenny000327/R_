@@ -178,12 +178,13 @@ ui <- dashboardPage(
                           tabPanel("Cluster 1", class = "custom-tab",
                                    fluidRow(
                                      box(title = "Cluster Description",class = "custom-box", verbatimTextOutput("desc_cluster1"), width = 12,
-                                       tagList(
-                                       h3("Cluster 1: 점포 수는 적지만 주차장과 인구 밀도가 높은 도시 중심지역"),
-                                       p(" 이 클러스터는 주차장 수가 많고, 인구 밀도와 유동인구가 매우 높지만, 상대적으로 점포 수가 적은 지역을 표현합니다. 
-이러한 특성은 큰 도시의 중심지역 또는 주거 밀집 지역일 가능성이 높습니다. 
+                                         tagList(
+                                           h3(tags$span("Cluster 1: ", style = "color: brown;"), "점포 수는 적지만 주차장과 인구 밀도가 높은 도시 중심지역"),
+                                           p("이 클러스터는 주차장 수가 많고, 인구 밀도와 유동인구가 매우 높지만, 상대적으로 점포 수가 적은 지역을 표현합니다.", 
+                                             br(), # 줄바꿈
+                                             "이러한 특성은",tags$span("큰 도시의 중심지역 또는 주거 밀집 지역일 가능성이 높습니다.", style = "color: brown;"),br(), br(), "
 이 지역은 많은 사람들이 모이는 곳이지만, 점포 수가 상대적으로 적어 경쟁이 비교적 덜 치열할 수 있습니다.")
-                                     )),
+                                         )),
                                      box(title = "Cluster1 Map",class = "custom-box", plotOutput("map_cluster1"), width = 8),
                                      box(title = "Cluster Centers",class = "custom-box", plotOutput("centers1"), width = 4),
                                      box(title = "Cluster Table", class = "custom-box",DTOutput("table_cluster1"), width = 12)
@@ -193,9 +194,9 @@ ui <- dashboardPage(
                                    fluidRow(
                                      box(title = "Cluster Description",class = "custom-box", verbatimTextOutput("desc_cluster2"), width = 12,
                                          tagList(
-                                           h3("Cluster 2: 점포 수는 많지만 인구 밀도와 주차장은 적은 상업적인 도심 지역"),
-                                           p(" 이 클러스터는 점포 수가 가장 많지만, 인구 밀도와 유동인구, 주차장 수가 상대적으로 적은 지역을 나타냅니다.
-이는 상업 지역이나 상가가 집중되어 있는 도심의 한 지역일 가능성이 있습니다.
+                                           h3(tags$span("Cluster 2: ", style = "color: brown;"), "점포 수는 많지만 인구 밀도와 주차장은 적은 상업적인 도심 지역"),
+                                           p(" 이 클러스터는 점포 수가 가장 많지만, 인구 밀도와 유동인구, 주차장 수가 상대적으로 적은 지역을 나타냅니다.",br(),"
+이는 ",tags$span("상업 지역이나 상가가 집중되어 있는 도심", style = "color: brown;"), "의 한 지역일 가능성이 있습니다.",br(),br(),"
 비록 사람들의 유동이 덜하지만, 다양한 종류의 점포가 많이 위치해 있을 것으로 추측됩니다.")
                                          )),
                                      box(title = "Cluster2 Map",class = "custom-box", plotOutput("map_cluster2"), width = 8),
@@ -207,9 +208,9 @@ ui <- dashboardPage(
                                    fluidRow(
                                      box(title = "Cluster Description",class = "custom-box", verbatimTextOutput("desc_cluster3"), width = 12,
                                          tagList(
-                                           h3("Cluster 3: 점포 수와 인구 밀도, 주차장이 모두 중간 정도인 도시 외곽 또는 주거 지역"),
-                                           p("  이 클러스터는 점포 수가 중간 정도에 위치하며, 인구 밀도와 유동인구가 상대적으로 높은 지역을 표현합니다.
-                                              이는 도시의 외곽 지역이나 주거 지역일 수 있으며, 상당히 높은 인구 밀도와 유동인구를 보유하고 있어 점포들에게 고객 유치에 유리할 수 있습니다.")
+                                           h3(tags$span("Cluster 3: ", style = "color: brown;"), "점포 수와 인구 밀도, 주차장이 모두 중간 정도인 도시 외곽 또는 주거 지역"),
+                                           p("  이 클러스터는 점포 수가 중간 정도에 위치하며, 인구 밀도와 유동인구가 상대적으로 높은 지역을 표현합니다.",br(),"
+                                              이는 ",tags$span("도시의 외곽 지역이나 주거 지역", style = "color: brown;"), "일 수 있으며, 상당히 높은 인구 밀도와 유동인구를 보유하고 있어 점포들에게 고객 유치에 유리할 수 있습니다.")
                                          )),
                                      box(title = "Cluster3 Map",class = "custom-box", plotOutput("map_cluster3"), width = 8),
                                      box(title = "Cluster Centers",class = "custom-box", plotOutput("centers3"), width = 4),
@@ -220,9 +221,9 @@ ui <- dashboardPage(
                                    fluidRow(
                                      box(title = "Cluster Description",class = "custom-box", verbatimTextOutput("desc_cluster4"), width = 12,
                                          tagList(
-                                           h3("Cluster 4: 점포 수는 적지만 인구 밀도와 주차장은 높은 주거 지역 또는 도심 주변 지역"),
-                                           p(" 이 클러스터는 인구 밀도와 유동인구, 주차장 수가 비교적 높은 반면, 점포 수는 상대적으로 적은 지역을 나타냅니다.
-이는 발전된 주거 지역이나 상업적 활동이 상대적으로 덜한 도심 주변의 지역일 가능성이 있습니다.
+                                           h3(tags$span("Cluster 4: ", style = "color: brown;"), "점포 수는 적지만 인구 밀도와 주차장은 높은 주거 지역 또는 도심 주변 지역"),
+                                           p(" 이 클러스터는 인구 밀도와 유동인구, 주차장 수가 비교적 높은 반면, 점포 수는 상대적으로 적은 지역을 나타냅니다.",br(),"
+이는 ",tags$span("발전된 주거 지역이나 상업적 활동이 상대적으로 덜한 도심 주변의 지역", style = "color: brown;"),"일 가능성이 있습니다.",br(),br(),"
 이러한 지역은 점포 수 대비 인구 밀도와 유동인구가 높아, 새로운 점포에게 큰 기회를 제공할 수 있습니다.")
                                          )),
                                      box(title = "Cluster4 Map",class = "custom-box", plotOutput("map_cluster4"), width = 8),
@@ -240,23 +241,40 @@ ui <- dashboardPage(
               tabsetPanel(id = "predict_tab",
                           tabPanel("Random Forest Plot",class = "custom-tab",
                                    fluidRow(
-                                     box(title = "Actual vs Predicted",class = "custom-box", plotOutput("rf_plot"), width = 12)
+                                     box(title = "Actual vs Predicted",class = "custom-box", plotOutput("rf_plot"), width = 10)
                                    )),
                           tabPanel("Linear Regression Plot",class = "custom-tab",
                                    fluidRow(
-                                     box(title = "Actual vs Predicted",class = "custom-box", plotOutput("reg_plot"), width = 12)
+                                     box(title = "Actual vs Predicted",class = "custom-box", plotOutput("reg_plot"), width = 10)
                                    )),
                           tabPanel("Evaluation Metrics",class = "custom-tab",
                                    fluidRow(
                                      box(title = "Evaluation MEtrics for Each Model", class = "custom-box",plotOutput("Evaluation"), width = 12)
+                                     #box(title = "Evaluation Table", class = "custom-box",plotOutput("Evaluation_Table"), width = 12)
                                    )),
                           tabPanel("Closure Rate Comparison",class = "custom-tab",
                                    fluidRow(
-                                     box(title = "Actual", plotOutput("Actual_map"),class = "custom-box", width = 6),
-                                     box(title = "Predicted", plotOutput("Predicted_map"), class = "custom-box",width = 6)
+                                     box(title = "Description Train_data",class = "custom-box", verbatimTextOutput("desc_Actual_map"), width = 6,
+                                         tagList(
+                                           p("모델이", tags$span("학습한 요식업 폐업률", style = "color: brown;"),"의 지역적 분포를 나타냅니다.",
+                                            br(),
+                                             "테이블은 각 지역의 ", tags$span("실제 폐업률", style = "color: brown;"),"을 보여줍니다.")
+                                           )
+                                     ),
+                                     box(title = "Description Test_data",class = "custom-box", verbatimTextOutput("desc_Predicted_map"), width = 6,
+                                         tagList(
+                                           p("모델이", tags$span("예측한 요식업 폐업률", style = "color: brown;"),"의 지역적 분포를 나타냅니다." ,
+                                             br(),
+                                             "테이블은 각 지역의 ", tags$span("실제와 예측 폐업률", style = "color: brown;"),"을 비교해줍니다.")
+                                         )
+                                     )),
+                                   fluidRow(
+                                     box(title = "Train_data", plotOutput("Actual_map"),class = "custom-box", width = 6),
+                                     box(title = "Test_data", plotOutput("Predicted_map"), class = "custom-box",width = 6)
                                    ),
                                    fluidRow(
-                                     box(title = "Table", class = "custom-box",DTOutput("Actual_Predicted_tabl"), width = 12)
+                                     box(title = "Train_Table", class = "custom-box",DTOutput("Actual_tabl"), width = 6),
+                                     box(title = "Test_Table", class = "custom-box",DTOutput("Predicted_tabl"), width = 6)
                                    )),
                           tabPanel("rf1 Variable Importance", class = "custom-tab",
                                    fluidRow(
@@ -335,8 +353,9 @@ server <- function(input, output){
     # 개업률과 폐업률을 포함한 데이터프레임 생성
     rates_data <- data_final_M %>%
       select(SIGUNGU_NM, DONG_NM, OP_RATE, CLS_RATE)%>%
-      mutate(CLS_RATE = round(CLS_RATE, 4))
+      mutate(CLS_RATE = round(CLS_RATE, 4),OP_RATE = round(OP_RATE, 4))
     
+    colnames(rates_data) <- c("시군구 명", "동", "개업률", "폐업률")
     datatable(rates_data, options = list(pageLength = 10))
   })
   
@@ -350,14 +369,17 @@ server <- function(input, output){
       # 'CLS_MK_NUM'과 선택한 변수 간의 산점도
       p <- ggplot(data_final_M, aes_string(x = selected_indicator, y = "CLS_MK_NUM")) +
         geom_point() +
-        geom_smooth(method = "lm", col = "red") + # 선형회귀선 추가
+        geom_smooth(method = "lm", col = "#FF4500") + # 선형회귀선 추가
         labs(x = selected_indicator, y = "Closure Rate",
-             title = paste("Scatterplot of", selected_indicator, "and Closure Rate"))
+             title = paste("Scatterplot of", selected_indicator, "and Closure Rate")) +
+        xlim(quantile(data_final_M[[selected_indicator]], 0.01), quantile(data_final_M[[selected_indicator]], 0.99))  # Adjust the x-axis range based on data without outliers
+      
       print(p)
     } else {
       print("The selected indicator or the closure rate is not numeric. Please select another indicator.")
     }
   })
+  
   
   
   
@@ -373,11 +395,28 @@ server <- function(input, output){
                                 "유동인구 유입량", "유동인구 유출량", "주차장 수")
     
     # 상관관계 행렬 계산
-    cor_matrix <- cor(data_numeric, use="pairwise.complete.obs")
+    cor_matrix <- cor(data_numeric, use = "pairwise.complete.obs")
+    
+    # 색상 설정
+    color_scheme <- colorRampPalette(c("#F6F6F6", "#FF4500"))(100)  # 색상 팔레트 설정
+    
+    # 크기 조절
+    plot_size <- 5  # 그래프 크기 조절
     
     # 상관관계 플롯
-    corrplot(cor_matrix, method = "circle")
+    p <- ggplot(data = reshape2::melt(cor_matrix), aes(x = Var1, y = Var2, fill = value)) +
+      geom_tile(color = "white") +
+      scale_fill_gradientn(colors = color_scheme) +
+      labs(x = "", y = "", title = "Correlation Heatmap") +
+      theme_bw() +
+      theme(plot.title = element_text(size = 20),
+            axis.text = element_text(size = 10),
+            legend.position = "bottom")
+    
+    p
   })
+  
+  
   
   
   
@@ -621,6 +660,7 @@ server <- function(input, output){
       )
     )
   })
+  
   # 중심 막대그래프
   output$centers1 <- renderPlot({
     ggplot(cluster_centers_long[cluster_centers_long$Cluster == 1,], aes(x = Variable, y = Value)) +
@@ -789,7 +829,12 @@ server <- function(input, output){
       theme_minimal() +
       ggtitle("Actual vs Predicted (RG1)") +
       labs(x = "Actual", y = "Predicted") +
-      theme(plot.title = element_text(hjust = 0.5))
+      theme(plot.title = element_text(hjust = 0.5),
+            plot.background = element_rect(fill = "white", color = "red", size = 2), # 강조를 위해 빨간색 테두리 추가
+            panel.background = element_rect(fill = "white", color = "black"),
+            panel.grid.major = element_line(color = "grey80"),
+            panel.grid.minor = element_blank(),
+            legend.position = "none")
     
     p_rg2 <- ggplot(test_data, aes(x = CLS_RATE, y = predictions_rg2)) +
       geom_point(color = pastel_palette[3]) +
@@ -832,6 +877,7 @@ server <- function(input, output){
                color = ifelse(eval_results_df$...1 == "rf1", "red", "white"),
                size = ifelse(eval_results_df$...1 == "rf1", 1.5, 0.5)) +  # 빨간색 선의 두께를 수정
       scale_fill_manual(values = pastel_palette02) +
+      #scale_y_continuous(limits = c(min(eval_results_df$mse) * 0.5, max(eval_results_df$mse) * 0.9)) +
       labs(x = "Model", y = "mse", fill = "Model",title = "mse") +
       theme_bw() +
       theme(legend.position = "top",plot.title = element_text(size = 20))
@@ -869,38 +915,45 @@ server <- function(input, output){
     grid.arrange(p_mse, p_mae, p_mape, p_rmse, nrow = 2)
   })
   
+  output$Evaluation_Table <- DT::renderDataTable({
+    datatable(eval_results_df)
+  })
+  
+  
+#str(eval_results_df)
   
   # test data, train data 합치기.
-  total_data <- bind_rows(test_data, train_data)
-  write.csv(total_data,"C:/data/preprocessed/total_data.csv")
-  total_data
+  #total_data <- bind_rows(test_data, train_data)
+  #write.csv(total_data,"C:/data/preprocessed/total_data.csv")
+  
   # Actual table
   output$Actual_tabl <- renderDT({
-    datatable(total_data %>%
+    datatable(train_data %>%
                 mutate(CLS_RATE = round(CLS_RATE, 4)) %>%
                 select(SIGUNGU_NM, DONG_NM, CLS_RATE) %>%
                 rename("시군구" = SIGUNGU_NM,
                        "동" = DONG_NM,
                        "폐업률" = CLS_RATE) %>%
-                arrange(desc(폐업률)),
+                arrange(desc("폐업률")),
               options = list(pageLength = 10, columnDefs = list(list(targets = "_all", className = "dt-center"))))
   })
   
   # Predicted table
   output$Predicted_tabl <- renderDT({
-    datatable(total_data %>%
-                mutate(predictions_rf1 = round(predictions_rf1, 4)) %>%
-                select(SIGUNGU_NM, DONG_NM, predictions_rf1) %>%
+    datatable(test_data %>%
+                mutate(CLS_RATE = round(CLS_RATE, 4), predictions_rf1 = round(predictions_rf1, 4)) %>%
+                select(SIGUNGU_NM, DONG_NM, CLS_RATE, predictions_rf1) %>%
                 rename("시군구" = SIGUNGU_NM,
                        "동" = DONG_NM,
+                       "폐업률" = CLS_RATE,
                        "예측 폐업률" = predictions_rf1) %>%
-                arrange(desc("예측 폐업률")),
+                arrange(desc("폐업률")),
               options = list(pageLength = 10, columnDefs = list(list(targets = "_all", className = "dt-center"))))
   })
   
   #Actual_Predicted_table
   output$Actual_Predicted_tabl<- renderDT({
-    datatable(total_data %>%
+    datatable(train_data %>%
                 mutate(CLS_RATE = round(CLS_RATE, 4), predictions_rf1 = round(predictions_rf1, 4)) %>%
                 select(SIGUNGU_NM, DONG_NM, CLS_RATE, predictions_rf1) %>%
                 rename("시군구" = SIGUNGU_NM,
@@ -917,8 +970,8 @@ server <- function(input, output){
       Variable = c("점포수", "유사업종점포수", "개업점포수", "프랜차이즈점포수", 
                    "개업률", "인구밀도", "유동인구유입량", "유동인구유출량", 
                    "주차장수", "클러스터"),
-      Importance = c(0.00764, 0.00794, 0.00559, 0.00722, 0.02389, 
-                     0.00428, 0.00828, 0.00432, 0.00495, 0.00153)
+      Importance = c(0.005885125, 0.006154335, 0.005173152, 0.005736991, 0.017432232, 
+                     0.003074676, 0.007259888, 0.002668425, 0.003235863, 0.001132173)
       #Angle = c(60, 80, 110, 130, 140, 30, 60, 80, 170, 0)  # 예시 각도, 실제로는 원하는 각도를 지정해주세요.
     )
     return(data)
@@ -946,7 +999,7 @@ server <- function(input, output){
   
   output$rf1_varimp_pie <- renderPlot({
     data <- rf1_importance()
-    data$angle <- 90 - 360 * (cumsum(data$Importance) - 0.9 * data$Importance)
+    data$angle <- 90 - 360 * (cumsum(data$Importance) - 0.5 * data$Importance)
     ggplot(data, aes(x="", y=Importance, fill=Variable)) +
       geom_bar(width=1, stat="identity") +
       coord_polar("y", start=0) +
@@ -960,10 +1013,6 @@ server <- function(input, output){
   })
   
   
-  
-
-  
-
   
   
 }

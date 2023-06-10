@@ -190,6 +190,7 @@ rf1_importance
 varImpPlot(models$rf1)
 
 
+
 eval_results_df
 write.csv(eval_results_df,"C:/data/preprocessed/eval_results_df.csv")
 write.csv(test_data,"C:/data/preprocessed/test_data.csv")
@@ -197,4 +198,8 @@ write.csv(test_data,"C:/data/preprocessed/train_data.csv")
 write.csv(df,"C:/data/preprocessed/cluster.csv")
 write.csv(cluster_centers,"C:/data/preprocessed/cluster_centers.csv")
 write.csv(rf1_importance,"C:/data/preprocessed/rf1_importance.csv")
+
+
+
+#df 로 모델링.
 
