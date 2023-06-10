@@ -416,7 +416,7 @@ server <- function(input, output){
     cor_matrix <- cor(data_numeric, use = "pairwise.complete.obs")
     
     # 색상 설정
-    color_scheme <- colorRampPalette(c("#F6F6F6", "#FF4500"))(100)  # 색상 팔레트 설정
+    color_scheme <- colorRampPalette(c("#F6F6F6", "#BC8F8F"))(100)  # 색상 팔레트 설정
     
     # 크기 조절
     plot_size <- 5  # 그래프 크기 조절
