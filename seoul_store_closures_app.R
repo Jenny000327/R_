@@ -25,7 +25,7 @@ rf1_importance <- read_csv("C:/data/preprocessed/rf1_importance.csv")
 
 # # data_final_M 데이터._가영
 #setwd("C:/")
-#setwd("Users/gayeongkim/Desktop/")
+#setwd("/Users/gayeongkim/Desktop/")
 # data_final_M <- read_csv("data/preprocessed/data_final.csv")
 # test_data <- read_csv("data/preprocessed/test_data.csv") %>% as_tibble()
 # train_data <- read_csv("data/preprocessed/train_data.csv") %>% as_tibble()
@@ -33,9 +33,10 @@ rf1_importance <- read_csv("C:/data/preprocessed/rf1_importance.csv")
 # eval_results_df <- read_csv("data/preprocessed/eval_results_df.csv")
 # cluster_data <- read_csv("data/preprocessed/cluster.csv")
 # cluster_centers <- read_csv("data/preprocessed/cluster_centers.csv")
-
+# rf1_importance <- read_csv("data/preprocessed/rf1_importance.csv")
 #str(eval_results_df)
 #View(eval_results_df)
+
 # 변수명을 한국어로 변경
 rf1_importance <- mutate(rf1_importance,
                          ...1 = case_when(
@@ -871,7 +872,8 @@ server <- function(input, output){
   
   # test data, train data 합치기.
   total_data <- bind_rows(test_data, train_data)
-  
+  write.csv(total_data,"C:/data/preprocessed/total_data.csv")
+  total_data
   # Actual table
   output$Actual_tabl <- renderDT({
     datatable(total_data %>%

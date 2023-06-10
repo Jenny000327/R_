@@ -88,16 +88,17 @@ test_data <- df[-train_indices, ]
 
 # 모델링
 models <- list(
-  "rf1" = randomForest(CLS_RATE ~ MK_NUM + SMK_NUM + OP_MK_NUM + FRC_MK_NUM + OP_RATE + DT + IN + OUT + PARKING + cluster, data = df), #독립변수 전부 다(CLS_RATE, CLS_MK_NUM 제외)
-  "rf2" = randomForest(CLS_RATE ~ MK_NUM + SMK_NUM + OP_MK_NUM + FRC_MK_NUM + cluster, data = df), #마켓 수 변수들만
-  "rf3" = randomForest(CLS_RATE ~ DT + IN + OUT + PARKING + cluster, data = df), # 따로 찾은 독립변수들만(점포수 제외)
-  "rf4" = randomForest(CLS_RATE ~ MK_NUM + SMK_NUM + DT + IN + OUT + PARKING + cluster, data = df), #다른 조합 시도(프렌차이즈 점포 수 제외)
+  "rf1" = randomForest(CLS_RATE ~ MK_NUM + SMK_NUM + OP_MK_NUM + FRC_MK_NUM + OP_RATE + DT + IN + OUT + PARKING + cluster, data = train_data),
+  "rf2" = randomForest(CLS_RATE ~ MK_NUM + SMK_NUM + OP_MK_NUM + FRC_MK_NUM + cluster, data = train_data),
+  "rf3" = randomForest(CLS_RATE ~ DT + IN + OUT + PARKING + cluster, data = train_data),
+  "rf4" = randomForest(CLS_RATE ~ MK_NUM + SMK_NUM + DT + IN + OUT + PARKING + cluster, data = train_data),
   
-  "rg1" = lm(CLS_RATE ~ MK_NUM + SMK_NUM + OP_MK_NUM + FRC_MK_NUM + OP_RATE + DT + IN + OUT + PARKING + cluster, data = df), #독립변수 전부 다(CLS_RATE, CLS_MK_NUM 제외)
-  "rg2" = lm(CLS_RATE ~ MK_NUM + SMK_NUM + OP_MK_NUM + FRC_MK_NUM + cluster, data = df), #마켓 수 변수들만
-  "rg3" = lm(CLS_RATE ~ DT + IN + OUT + PARKING + cluster, data = df), # 따로 찾은 독립변수들만(점포수 제외)
-  "rg4" = lm(CLS_RATE ~ MK_NUM + SMK_NUM + DT + IN + OUT + PARKING + cluster, data = df) #다른 조합 시도(프렌차이즈 점포 수 제외)
+  "rg1" = lm(CLS_RATE ~ MK_NUM + SMK_NUM + OP_MK_NUM + FRC_MK_NUM + OP_RATE + DT + IN + OUT + PARKING + cluster, data = train_data),
+  "rg2" = lm(CLS_RATE ~ MK_NUM + SMK_NUM + OP_MK_NUM + FRC_MK_NUM + cluster, data = train_data),
+  "rg3" = lm(CLS_RATE ~ DT + IN + OUT + PARKING + cluster, data = train_data),
+  "rg4" = lm(CLS_RATE ~ MK_NUM + SMK_NUM + DT + IN + OUT + PARKING + cluster, data = train_data)
 )
+
 
 # 예측
 for(model in names(models)){
