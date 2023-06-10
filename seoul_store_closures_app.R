@@ -241,15 +241,33 @@ ui <- dashboardPage(
               tabsetPanel(id = "predict_tab",
                           tabPanel("Random Forest Plot",class = "custom-tab",
                                    fluidRow(
-                                     box(title = "Actual vs Predicted",class = "custom-box", plotOutput("rf_plot"), width = 10)
+                                     box(title = "Actual vs Predicted",class = "custom-box", plotOutput("rf_plot"), width = 8),
+                                     box(title = "Description Actual vs Predicted",class = "custom-box",  width = 4,
+                                         tagList(
+                                           p("
+Random forest 모델들 중에서 ",br(), tags$span(" RF1 모델이", style = "color: brown;")," 실제값과 예측값 사이에 ",br(),"상대적으로 가장 선형적인 경향을 보였습니다.")
+                                         ))
                                    )),
                           tabPanel("Linear Regression Plot",class = "custom-tab",
                                    fluidRow(
-                                     box(title = "Actual vs Predicted",class = "custom-box", plotOutput("reg_plot"), width = 10)
+                                     box(title = "Actual vs Predicted",class = "custom-box", plotOutput("reg_plot"), width = 8),
+                                     box(title = "Description Actual vs Predicted",class = "custom-box",  width = 4,
+                                         tagList(
+                                           p("
+Regression 모델들 중에서 ",br(), tags$span(" RG1 모델이", style = "color: brown;")," 실제값과 예측값 사이에 ",br(),"상대적으로 가장 선형적인 경향을 보였습니다.")
+                                         ))
                                    )),
                           tabPanel("Evaluation Metrics",class = "custom-tab",
                                    fluidRow(
-                                     box(title = "Evaluation MEtrics for Each Model", class = "custom-box",plotOutput("Evaluation"), width = 12)
+                                     box(title = "Evaluation MEtrics for Each Model", class = "custom-box",plotOutput("Evaluation"), width = 12),
+                                     box(title = "Description",class = "custom-box",  width = 6,height = 200,
+                                         tagList(
+                                           p(tags$span("결론적으로, RF1 모델은 다른 모델들보다 더 선형에 가까운 예측을 수행한 것으로 해석할 수 있습니다.", style = "color: brown;"),br(), br(),"RF1 모델은 mse와 rmse 값이 다른 모델들에 비해 가장 작으며,",br(),"  mae와 mape 값도 상대적으로 작습니다.",br(),br()," 따라서 RF1 모델이 실제 값과 예측 값 사이의 오차를 가장 작게 만들어주는 모델입니다.")
+                                         )),
+                                     box(title = "RF1 모델 vs RG1 모델",class = "custom-box",  width = 6, height = 200,
+                                         tagList(
+                                           p(tags$span("RG1 모델은 RF1 모델과 비교했을 때 예측 성능이 떨어집니다. ", style = "color: brown;"),br(),br(), "  RG1 모델은 선형성 측면에서 RF1 모델과 유사한 결과를 보여줄 수 있지만, 오차가 크게 나타납니다. ",br(),"  mse와 rmse 값은 RF1 모델과 비슷하지만, mae와 mape 값이 상대적으로 더 큽니다.",br(),"  이는 RG1 모델이 실제 값과 예측 값 사이의 오차가 RF1 모델보다 크다는 것을 의미합니다.",br(),br()," 따라서 RF1 모델이 RG1 모델보다 더 좋은 예측 성능을 가진 것으로 해석할 수 있습니다.")
+                                         ))
                                      #box(title = "Evaluation Table", class = "custom-box",plotOutput("Evaluation_Table"), width = 12)
                                    )),
                           tabPanel("Closure Rate Comparison",class = "custom-tab",
