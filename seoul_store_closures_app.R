@@ -288,8 +288,8 @@ ui <- dashboardPage(
                                          )
                                      )),
                                    fluidRow(
-                                     box(title = "Train_data", plotOutput("Actual_map"),class = "custom-box", width = 6),
-                                     box(title = "Test_data", plotOutput("Predicted_map"), class = "custom-box",width = 6)
+                                     box(title = "Train_data", plotlyOutput("Actual_map"),class = "custom-box", width = 6),
+                                     box(title = "Test_data", plotlyOutput("Predicted_map"), class = "custom-box",width = 6)
                                    ),
                                    fluidRow(
                                      box(title = "Train_Table", class = "custom-box",DTOutput("Actual_tabl"), width = 6),
@@ -942,16 +942,17 @@ server <- function(input, output){
   
   
   
-  output$Evaluation_Table <- DT::renderDataTable({
-    datatable(eval_results_df)
+  #Actual_map
+  output$Actual_map <- renderPlotly({
+    
+    fig <- plot_ly(train_data, x = ~cluster, y = ~CLS_RATE, type = 'box') %>%
+      layout(
+        xaxis = list(title = "Cluster"),
+        yaxis = list(title = "Actual Closure Rate")
+      )
+    
+    fig
   })
-  
-  
-#str(eval_results_df)
-  
-  # test data, train data 합치기.
-  #total_data <- bind_rows(test_data, train_data)
-  #write.csv(total_data,"C:/data/preprocessed/total_data.csv")
   
   # Actual table
   output$Actual_tabl <- renderDT({
@@ -963,6 +964,32 @@ server <- function(input, output){
                        "폐업률" = CLS_RATE) %>%
                 arrange(desc("폐업률")),
               options = list(pageLength = 10, columnDefs = list(list(targets = "_all", className = "dt-center"))))
+  })
+  
+  
+  # Predicted map
+  output$Predicted_map <- renderPlotly({
+    
+    test_data_long <- test_data %>% 
+      tidyr::pivot_longer(cols = c(CLS_RATE, predictions_rf1), 
+                          names_to = "Type", 
+                          values_to = "Rate")
+    
+    fig <- plot_ly()
+    fig <- fig %>% 
+      add_trace(
+        data = test_data_long,
+        r = ~Rate,
+        theta = ~DONG_NM,
+        split = ~Type,
+        type = 'scatterpolar',
+        mode = 'lines+markers'
+      ) 
+    fig <- fig %>% layout(
+      polar = list(radialaxis = list(visible = TRUE, range = range(test_data_long$Rate))),
+      showlegend = TRUE
+    )
+    fig
   })
   
   # Predicted table
@@ -978,18 +1005,18 @@ server <- function(input, output){
               options = list(pageLength = 10, columnDefs = list(list(targets = "_all", className = "dt-center"))))
   })
   
-  #Actual_Predicted_table
-  output$Actual_Predicted_tabl<- renderDT({
-    datatable(train_data %>%
-                mutate(CLS_RATE = round(CLS_RATE, 4), predictions_rf1 = round(predictions_rf1, 4)) %>%
-                select(SIGUNGU_NM, DONG_NM, CLS_RATE, predictions_rf1) %>%
-                rename("시군구" = SIGUNGU_NM,
-                       "동" = DONG_NM,
-                       "폐업률" = CLS_RATE,
-                       "예측 폐업률" = predictions_rf1) %>%
-                arrange(desc("폐업률")),
-              options = list(pageLength = 10, columnDefs = list(list(targets = "_all", className = "dt-center"))))
-  })
+  # #Actual_Predicted_table
+  # output$Actual_Predicted_tabl<- renderDT({
+  #   datatable(train_data %>%
+  #               mutate(CLS_RATE = round(CLS_RATE, 4), predictions_rf1 = round(predictions_rf1, 4)) %>%
+  #               select(SIGUNGU_NM, DONG_NM, CLS_RATE, predictions_rf1) %>%
+  #               rename("시군구" = SIGUNGU_NM,
+  #                      "동" = DONG_NM,
+  #                      "폐업률" = CLS_RATE,
+  #                      "예측 폐업률" = predictions_rf1) %>%
+  #               arrange(desc("폐업률")),
+  #             options = list(pageLength = 10, columnDefs = list(list(targets = "_all", className = "dt-center"))))
+  # })
   
 
   rf1_importance <- reactive({
@@ -1039,7 +1066,7 @@ server <- function(input, output){
       geom_text(aes(label = Variable, angle = angle), position = position_stack(vjust = 0.5), color = "black")
   })
   
-  
+
   
   
 }
