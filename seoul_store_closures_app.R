@@ -14,6 +14,7 @@ library(shinythemes)
 library(corrplot)
 library(grid)
 
+
 # data_final_M 데이터.
 data_final_M <- read_csv("C:/data/preprocessed/data_final.csv")
 test_data <- read_csv("C:/data/preprocessed/test_data.csv") %>% as_tibble()
@@ -186,7 +187,7 @@ ui <- dashboardPage(
                                              "이러한 특성은",tags$span("큰 도시의 중심지역 또는 주거 밀집 지역일 가능성이 높습니다.", style = "color: brown;"),br(), br(), "
 이 지역은 많은 사람들이 모이는 곳이지만, 점포 수가 상대적으로 적어 경쟁이 비교적 덜 치열할 수 있습니다.")
                                          )),
-                                     box(title = "Cluster1 Map",class = "custom-box", plotOutput("map_cluster1"), width = 8),
+                                     box(title = "Cluster1 Map",class = "custom-box", imageOutput("map_cluster1"), width = 8),
                                      box(title = "Cluster Centers",class = "custom-box", plotOutput("centers1"), width = 4),
                                      box(title = "Cluster Table", class = "custom-box",DTOutput("table_cluster1"), width = 12)
                                    )),
@@ -200,7 +201,7 @@ ui <- dashboardPage(
 이는 ",tags$span("상업 지역이나 상가가 집중되어 있는 도심", style = "color: brown;"), "의 한 지역일 가능성이 있습니다.",br(),br(),"
 비록 사람들의 유동이 덜하지만, 다양한 종류의 점포가 많이 위치해 있을 것으로 추측됩니다.")
                                          )),
-                                     box(title = "Cluster2 Map",class = "custom-box", plotOutput("map_cluster2"), width = 8),
+                                     box(title = "Cluster2 Map",class = "custom-box", imageOutput("map_cluster2"), width = 8),
                                      box(title = "Cluster Centers",class = "custom-box", plotOutput("centers2"), width = 4),
                                      box(title = "Cluster Table", class = "custom-box",DTOutput("table_cluster2"), width = 12)
                                    )),
@@ -213,7 +214,7 @@ ui <- dashboardPage(
                                            p("  이 클러스터는 점포 수가 중간 정도에 위치하며, 인구 밀도와 유동인구가 상대적으로 높은 지역을 표현합니다.",br(),"
                                               이는 ",tags$span("도시의 외곽 지역이나 주거 지역", style = "color: brown;"), "일 수 있으며, 상당히 높은 인구 밀도와 유동인구를 보유하고 있어 점포들에게 고객 유치에 유리할 수 있습니다.")
                                          )),
-                                     box(title = "Cluster3 Map",class = "custom-box", plotOutput("map_cluster3"), width = 8),
+                                     box(title = "Cluster3 Map",class = "custom-box", imageOutput("map_cluster3"), width = 8),
                                      box(title = "Cluster Centers",class = "custom-box", plotOutput("centers3"), width = 4),
                                      box(title = "Cluster Table", class = "custom-box",DTOutput("table_cluster3"), width = 12)
                                    )),
@@ -227,7 +228,7 @@ ui <- dashboardPage(
 이는 ",tags$span("발전된 주거 지역이나 상업적 활동이 상대적으로 덜한 도심 주변의 지역", style = "color: brown;"),"일 가능성이 있습니다.",br(),br(),"
 이러한 지역은 점포 수 대비 인구 밀도와 유동인구가 높아, 새로운 점포에게 큰 기회를 제공할 수 있습니다.")
                                          )),
-                                     box(title = "Cluster4 Map",class = "custom-box", plotOutput("map_cluster4"), width = 8),
+                                     box(title = "Cluster4 Map",class = "custom-box", imageOutput("map_cluster4"), width = 8),
                                      box(title = "Cluster Centers",class = "custom-box", plotOutput("centers4"), width = 4),
                                      box(title = "Cluster Table", class = "custom-box",DTOutput("table_cluster4"), width = 12)
                                    ))
@@ -273,27 +274,20 @@ ui <- dashboardPage(
                                    )),
                           tabPanel("Closure Rate Comparison",class = "custom-tab",
                                    fluidRow(
-                                     box(title = "Description Train_data",class = "custom-box", verbatimTextOutput("desc_Actual_map"), width = 6,
+                                     box(title = "Description",class = "custom-box", verbatimTextOutput("desc_Predicted_map"), width = 12,
                                          tagList(
-                                           p("모델이", tags$span("학습한 요식업 폐업률", style = "color: brown;"),"의 지역적 분포를 나타냅니다.",
-                                            br(),
-                                             "테이블은 각 지역의 ", tags$span("실제 폐업률", style = "color: brown;"),"을 보여줍니다.")
-                                           )
-                                     ),
-                                     box(title = "Description Test_data",class = "custom-box", verbatimTextOutput("desc_Predicted_map"), width = 6,
-                                         tagList(
-                                           p("모델이", tags$span("예측한 요식업 폐업률", style = "color: brown;"),"의 지역적 분포를 나타냅니다." ,
+                                           p("모델이", tags$span("예측한 요식업 폐업률의 지역적 분포를 Radar Chart로 시각화한 것", style = "color: brown;"),"입니다. Radar Chart는 각 동별 실제 폐업률과 예측 폐업률을 동시에 비교할 수 있는 차트입니다.",
                                              br(),
-                                             "테이블은 각 지역의 ", tags$span("실제와 예측 폐업률", style = "color: brown;"),"을 비교해줍니다.")
+                                             br()," 각 동을 나타내는 궤적 위에 실제 폐업률과 예측 폐업률을 나타내는 선과 마커가 표시되어 있습니다.",
+                                             br()," 차트를 통해 동별로 실제 폐업률과 예측 폐업률의 차이를 비교합니다.",
+                                             br(),
+                                             br()," 또한, 차트의 범위는 실제 폐업률과 예측 폐업률의 최솟값과 최댓값에 따라 자동으로 조정됩니다.",
+                                             br()," Radar Chart는 Radar 모양으로 데이터를 시각화하기 때문에 다양한 변수를 동시에 비교하기에 유용합니다." ,)
                                          )
                                      )),
                                    fluidRow(
-                                     box(title = "Train_data", plotlyOutput("Actual_map"),class = "custom-box", width = 6),
-                                     box(title = "Test_data", plotlyOutput("Predicted_map"), class = "custom-box",width = 6)
-                                   ),
-                                   fluidRow(
-                                     box(title = "Train_Table", class = "custom-box",DTOutput("Actual_tabl"), width = 6),
-                                     box(title = "Test_Table", class = "custom-box",DTOutput("Predicted_tabl"), width = 6)
+                                     box(title = "Closure Rate Comparison", plotlyOutput("Predicted_map"), class = "custom-box",width = 6, height = 600),
+                                     box(title = "Closure Rate Comparison Table", class = "custom-box",DTOutput("Predicted_tabl"), width = 6, height = 600)
                                    )),
                           tabPanel("rf1 Variable Importance", class = "custom-tab",
                                    fluidRow(
@@ -682,17 +676,12 @@ server <- function(input, output){
   
   # 중심 막대그래프
   output$centers1 <- renderPlot({
-    ggplot(cluster_centers_long[cluster_centers_long$Cluster == 1,], aes(x = Variable, y = Value)) +
+    ggplot(cluster_centers_long[cluster_centers_long$Cluster == 3,], aes(x = Variable, y = Value)) +
       geom_bar(stat = "identity", fill = "#A2866A") +
       theme(axis.text.x = element_text(angle = 45, hjust = 1)) +
       labs(x = "Variable", y = "Normalized Center Value", title = "Cluster 1")
   })
-  #지도
-  output$map_cluster1 <- renderPlot({ })
-  #Text
-  output$desc_cluster1 <- renderText({ })
-  
-  
+ 
   
   # 클러스터2
   
@@ -711,17 +700,12 @@ server <- function(input, output){
   })
   # 중심 막대그래프
   output$centers2 <- renderPlot({
-    ggplot(cluster_centers_long[cluster_centers_long$Cluster == 2,], aes(x = Variable, y = Value)) +
+    ggplot(cluster_centers_long[cluster_centers_long$Cluster == 4,], aes(x = Variable, y = Value)) +
       geom_bar(stat = "identity", fill = "#A2866A") +
       theme(axis.text.x = element_text(angle = 45, hjust = 1)) +
       labs(x = "Variable", y = "Normalized Center Value", title = "Cluster 2")
   })
-  #지도
-  output$map_cluster2 <- renderPlot({ })
-  #Text
-  output$desc_cluster2 <- renderText({ })
-  
-  
+
   
   
   # 클러스터3
@@ -741,17 +725,12 @@ server <- function(input, output){
   })
   # 중심 막대그래프
   output$centers3 <- renderPlot({
-    ggplot(cluster_centers_long[cluster_centers_long$Cluster == 3,], aes(x = Variable, y = Value)) +
+    ggplot(cluster_centers_long[cluster_centers_long$Cluster == 2,], aes(x = Variable, y = Value)) +
       geom_bar(stat = "identity", fill = "#A2866A") +
       theme(axis.text.x = element_text(angle = 45, hjust = 1)) +
       labs(x = "Variable", y = "Normalized Center Value", title = "Cluster 3")
   })
-  #지도
-  output$map_cluster3 <- renderPlot({ })
-  #Text
-  output$desc_cluster3 <- renderText({ })
-  
-  
+ 
   
   
   # 클러스터4
@@ -771,18 +750,33 @@ server <- function(input, output){
   })
   # 중심 막대그래프
   output$centers4 <- renderPlot({
-    ggplot(cluster_centers_long[cluster_centers_long$Cluster == 4,], aes(x = Variable, y = Value)) +
+    ggplot(cluster_centers_long[cluster_centers_long$Cluster == 1,], aes(x = Variable, y = Value)) +
       geom_bar(stat = "identity", fill = "#A2866A") +
       theme(axis.text.x = element_text(angle = 45, hjust = 1)) +
       labs(x = "Variable", y = "Normalized Center Value", title = "Cluster 4")
   })
-  #지도
-  output$map_cluster4 <- renderPlot({ })
-  #Text
-  output$desc_cluster4 <- renderText({  })
-  
-  
 
+
+
+  # Cluster 1 Map
+  output$map_cluster1 <- renderImage({
+    list(src = "www/cluster1.png", contentType = "image/png", alt = "Cluster 1 Map", width = "100%", height = 400)
+  }, deleteFile = FALSE)
+  
+  # Cluster 2 Map
+  output$map_cluster2 <- renderImage({
+    list(src = "www/cluster2.png", contentType = "image/png", alt = "Cluster 2 Map", width = "100%", height = 400)
+  }, deleteFile = FALSE)
+  
+  # Cluster 3 Map
+  output$map_cluster3 <- renderImage({
+    list(src = "www/cluster3.png", contentType = "image/png", alt = "Cluster 3 Map", width = "100%", height = 400)
+  }, deleteFile = FALSE)
+  
+  # Cluster 4 Map
+  output$map_cluster4 <- renderImage({
+    list(src = "www/cluster4.png", contentType = "image/png", alt = "Cluster 4 Map", width = "100%", height = 400)
+  }, deleteFile = FALSE)
   
   
   
@@ -942,29 +936,29 @@ server <- function(input, output){
   
   
   
-  #Actual_map
-  output$Actual_map <- renderPlotly({
-    
-    fig <- plot_ly(train_data, x = ~cluster, y = ~CLS_RATE, type = 'box') %>%
-      layout(
-        xaxis = list(title = "Cluster"),
-        yaxis = list(title = "Actual Closure Rate")
-      )
-    
-    fig
-  })
-  
-  # Actual table
-  output$Actual_tabl <- renderDT({
-    datatable(train_data %>%
-                mutate(CLS_RATE = round(CLS_RATE, 4)) %>%
-                select(SIGUNGU_NM, DONG_NM, CLS_RATE) %>%
-                rename("시군구" = SIGUNGU_NM,
-                       "동" = DONG_NM,
-                       "폐업률" = CLS_RATE) %>%
-                arrange(desc("폐업률")),
-              options = list(pageLength = 10, columnDefs = list(list(targets = "_all", className = "dt-center"))))
-  })
+  # #Actual_map
+  # output$Actual_map <- renderPlotly({
+  #   
+  #   fig <- plot_ly(train_data, x = ~cluster, y = ~CLS_RATE, type = 'box') %>%
+  #     layout(
+  #       xaxis = list(title = "Cluster"),
+  #       yaxis = list(title = "Actual Closure Rate")
+  #     )
+  #   
+  #   fig
+  # })
+  # 
+  # # Actual table
+  # output$Actual_tabl <- renderDT({
+  #   datatable(train_data %>%
+  #               mutate(CLS_RATE = round(CLS_RATE, 4)) %>%
+  #               select(SIGUNGU_NM, DONG_NM, CLS_RATE) %>%
+  #               rename("시군구" = SIGUNGU_NM,
+  #                      "동" = DONG_NM,
+  #                      "폐업률" = CLS_RATE) %>%
+  #               arrange(desc("폐업률")),
+  #             options = list(pageLength = 10, columnDefs = list(list(targets = "_all", className = "dt-center"))))
+  # })
   
   
   # Predicted map
@@ -987,7 +981,8 @@ server <- function(input, output){
       ) 
     fig <- fig %>% layout(
       polar = list(radialaxis = list(visible = TRUE, range = range(test_data_long$Rate))),
-      showlegend = TRUE
+      showlegend = TRUE,
+      height = 500
     )
     fig
   })
