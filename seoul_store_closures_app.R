@@ -12,6 +12,7 @@ library(tidyr)  # tidyr 패키지
 library(gridExtra)
 library(shinythemes)
 library(corrplot)
+library(grid)
 
 # data_final_M 데이터.
 data_final_M <- read_csv("C:/data/preprocessed/data_final.csv")
@@ -114,7 +115,7 @@ ui <- dashboardPage(
                 tabPanel("Correlation Analysis",
                          fluidRow(
                            box(title = "Correlation Scatterplot", class = "custom-box",style = "height: 500px;", selectInput("indicator_dong", "Choose an indicator", choices = c("점포수" = "MK_NUM", "유사업종점포수" = "SMK_NUM", "개업점포수" = "OP_MK_NUM",
-                                                                                                                                                                                         "폐업점포수" = "CLS_MK_NUM", "프랜차이즈 점포수" = "FRC_MK_NUM",
+                                                                                                                                                                                         "개업률" = "CLS_RATE", "프랜차이즈 점포수" = "FRC_MK_NUM",
                                                                                                                                                                                          "인구밀도" = "DT", "유동인구 유입량" = "IN",
                                                                                                                                                                                          "유동인구 유출량" = "OUT", "주차장 수" = "PARKING")), plotOutput("correlation_plot"),width = 6),
                            box(title = "Correlation Matrix", class = "custom-box", plotOutput("correlation_plot02"), style = "height: 500px;",width = 6)
@@ -244,8 +245,7 @@ ui <- dashboardPage(
                                      box(title = "Actual vs Predicted",class = "custom-box", plotOutput("rf_plot"), width = 8),
                                      box(title = "Description Actual vs Predicted",class = "custom-box",  width = 4,
                                          tagList(
-                                           p("
-Random forest 모델들 중에서 ",br(), tags$span(" RF1 모델이", style = "color: brown;")," 실제값과 예측값 사이에 ",br(),"상대적으로 가장 선형적인 경향을 보였습니다.")
+                                           p("Random forest 모델들 중에서 ",br(), tags$span(" RF1 모델이", style = "color: brown;")," 실제값과 예측값 사이에 ",br(),"상대적으로 가장 선형적인 경향을 보였습니다.")
                                          ))
                                    )),
                           tabPanel("Linear Regression Plot",class = "custom-tab",
@@ -253,13 +253,14 @@ Random forest 모델들 중에서 ",br(), tags$span(" RF1 모델이", style = "c
                                      box(title = "Actual vs Predicted",class = "custom-box", plotOutput("reg_plot"), width = 8),
                                      box(title = "Description Actual vs Predicted",class = "custom-box",  width = 4,
                                          tagList(
-                                           p("
-Regression 모델들 중에서 ",br(), tags$span(" RG1 모델이", style = "color: brown;")," 실제값과 예측값 사이에 ",br(),"상대적으로 가장 선형적인 경향을 보였습니다.")
+                                           p("Regression 모델들 중에서 ",br(), tags$span(" RG1 모델이", style = "color: brown;")," 실제값과 예측값 사이에 ",br(),"상대적으로 가장 선형적인 경향을 보였습니다.")
                                          ))
                                    )),
                           tabPanel("Evaluation Metrics",class = "custom-tab",
                                    fluidRow(
-                                     box(title = "Evaluation MEtrics for Each Model", class = "custom-box",plotOutput("Evaluation"), width = 12),
+                                     box(title = "Evaluation Metrics for Each Model", class = "custom-box",
+                                         tagList(p(tags$span("Lower is better for all metrics", style = "color: brown; font-size: 20px;"))),
+                                         plotOutput("Evaluation"), width = 12),
                                      box(title = "Description",class = "custom-box",  width = 6,height = 200,
                                          tagList(
                                            p(tags$span("결론적으로, RF1 모델은 다른 모델들보다 더 선형에 가까운 예측을 수행한 것으로 해석할 수 있습니다.", style = "color: brown;"),br(), br(),"RF1 모델은 mse와 rmse 값이 다른 모델들에 비해 가장 작으며,",br(),"  mae와 mape 값도 상대적으로 작습니다.",br(),br()," 따라서 RF1 모델이 실제 값과 예측 값 사이의 오차를 가장 작게 만들어주는 모델입니다.")
@@ -428,8 +429,8 @@ server <- function(input, output){
       labs(x = "", y = "", title = "Correlation Heatmap") +
       theme_bw() +
       theme(plot.title = element_text(size = 20),
-            axis.text = element_text(size = 10),
-            legend.position = "bottom")
+            axis.text.x = element_text(angle = 90, vjust = 0.5, hjust=1, size = 10),  # x축 라벨 설정
+            axis.text.y = element_text(size = 10)) # y축 라벨 설정
     
     p
   })
@@ -930,8 +931,16 @@ server <- function(input, output){
       theme_bw() +
       theme(legend.position = "top",plot.title = element_text(size = 20))
     
+    
+    
     grid.arrange(p_mse, p_mae, p_mape, p_rmse, nrow = 2)
+    
+    
+    
+    
   })
+  
+  
   
   output$Evaluation_Table <- DT::renderDataTable({
     datatable(eval_results_df)
