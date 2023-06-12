@@ -13,7 +13,7 @@ library(gridExtra)
 library(shinythemes)
 library(corrplot)
 library(grid)
-
+library(plotly)
 
 # data_final_M 데이터.
 data_final_M <- read_csv("C:/data/preprocessed/data_final.csv")
@@ -293,7 +293,37 @@ ui <- dashboardPage(
                                    fluidRow(
                                      box(title = "Barplot of Variable Importance", class = "custom-box", plotOutput("rf1_varimp_bar"), width = 6),
                                      box(title = "Piechart of Variable Importance", class = "custom-box", plotOutput("rf1_varimp_pie"), width = 6)
-                                   ))
+                                   ),
+                                   fluidRow(
+                                     box(title = "Description", class = "custom-box", width = 12,
+                                         tagList(
+                                           p("1. ", tags$span(" 개업률:", style = "color: brown;"),"개업률이 높은 지역은 새로운 사업이 시작되는 곳이 많다는 것을 의미합니다. 이는 경제 활동이 활발하고 창업 문화가 잘 자리잡았음을 나타내며, 이런 환경은 더 많은 고객을 유치하고, 따라서 폐업률을 낮추는 데 도움이 될 수 있습니다.",
+                                             br(),
+                                             br(),"2. ", tags$span(" 유동인구 유입량:", style = "color: brown;")," 유동인구 유입량이 높은 곳은 그 지역에 방문하는 사람들이 많다는 것을 의미합니다. 이는 매장에 고객을 끌어들이는 데 중요한 역할을 하므로, 더 많은 수익을 창출하고 폐업률을 줄이는 데 도움이 될 수 있습니다.",
+                                             br(),
+                                             br(),"3. ", tags$span(" 점포수:", style = "color: brown;")," 전체 점포수는 그 지역의 경제 활동의 규모를 나타냅니다. 점포수가 많을수록 경제 활동이 활발하고, 다양한 상품과 서비스가 고객에게 제공됩니다. 이는 경쟁력을 높이고, 고객의 선택지를 넓혀주어 폐업률을 낮추는 데 기여할 수 있습니다.
+",
+                                             br(),
+                                             br(),"4. ", tags$span(" 유사업종점포수:", style = "color: brown;")," 유사업종 점포수가 많을수록 그 지역의 특정 업종에 대한 경쟁이 치열해질 가능성이 있습니다. 경쟁은 품질 향상, 가격 인하 등을 통해 고객에게 이점을 제공하지만, 한편으로는 잘못 관리되면 점포의 폐업률을 높일 수도 있습니다.",
+                                             br(),
+                                             br(),"5. ", tags$span(" 개업점포수: ", style = "color: brown;")," 새로운 점포가 계속해서 생겨나는 것은 그 지역의 경제 활동이 활발하다는 또 다른 지표입니다. 신규 개업은 경제의 활력을 증명하지만, 동시에 새로운 경쟁을 의미하므로 관리가 잘 이루어지지 않으면 폐업률에 부정적 영향을 미칠 수 있습니다.",
+                                             br(),
+                                             br(),"6. ", tags$span(" 프랜차이즈점포수:", style = "color: brown;")," 프랜차이즈 점포수가 많은 지역은 그 브랜드의 인지도가 높고 고객들에게 잘 알려져 있다는 것을 의미합니다. 프랜차이즈는 안정적인 운영 시스템과 브랜드 인지도를 통해 폐업률을 낮추는데 기여할 수 있습니다.
+",
+                                             br(),
+                                             br(),"7. ", tags$span(" 주차장 수:", style = "color: brown;")," 주차장 수는 그 지역의 접근성과 편의성을 나타냅니다. 충분한 주차 공간은 고객들에게 편의를 제공하고, 이로 인해 매장 방문을 증가시키며, 폐업률을 낮출 수 있습니다.
+",
+                                             br(),
+                                             br(),"8. ", tags$span(" 인구 밀도:", style = "color: brown;")," 인구 밀도가 높은 곳은 고객 풀이 크다는 것을 의미합니다. 이는 더 많은 수요를 창출하고, 이를 통해 매출을 증가시키고 폐업률을 줄일 수 있습니다.
+",
+                                             br(),
+                                             br(),"9. ", tags$span(" 유동인구 유출량: ", style = "color: brown;")," 반면에, 유동인구 유출량이 높은 곳은 그 지역에서 사람들이 떠나는 경향이 있다는 것을 나타냅니다. 이는 고객 풀이 감소하고, 그 결과 폐업률이 높아질 수 있습니다.
+",
+                                             br(),
+                                             br(),"10. ", tags$span("  클러스터:", style = "color: brown;")," 클러스터는 비슷한 특성을 가진 지역들의 집합을 나타냅니다. 클러스터 내에서 비슷한 특성을 가진 지역들은 공통된 경제적, 사회적 요인에 의해 영향을 받을 가능성이 있습니다. 이는 클러스터 내에서의 경쟁 상황, 특정한 경제적, 사회적 상황 등이 폐업률에 영향을 미칠 수 있음을 나타냅니다.",
+                                             br()
+                                         ))
+                                   )))
               )
       )
     )
